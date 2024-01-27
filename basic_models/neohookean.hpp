@@ -5,7 +5,7 @@
 
 namespace constitutive_models {
 
-class NeoHookean : public MatLaw<4> {
+class NeoHookean : public MatLaw3D<9> {
   public:
     double mu;
 
@@ -13,8 +13,7 @@ class NeoHookean : public MatLaw<4> {
     NeoHookean(double mu);
     ~NeoHookean(){};
     void set_pars(double mu);
-    double stress(const kinematics::kinematics<4> &kin, double stress[]);
-    void stress(double args[], double stress[]);
+    void stress(const kinematics::kinematics<9> &kin, double stress[]);
 };
 
 } // namespace constitutive_models

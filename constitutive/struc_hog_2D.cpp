@@ -1,6 +1,6 @@
-#include "struc_hog_2D.hpp"
 #include "../kinematics/kinematics.hpp"
 #include "../kinematics/tensor_algebra.hpp"
+#include "struc_hog_2D.hpp"
 #include <cmath>
 
 /*----------------------------------------------------------------------
@@ -77,8 +77,8 @@ void StrucHOG2D::set_pars(
     double det = Cmax[0] * Cmax[3] - Cmax[1] * Cmax[1];
     // double I_n = 1.0 / det;
     // double I_1 = Cmax[0] + Cmax[3] + I_n;
-    double I_4 = ddot(H4, Cmax);
-    double I_6 = ddot(H6, Cmax);
+    double I_4 = ddot2D(H4, Cmax);
+    double I_6 = ddot2D(H6, Cmax);
     // double E6 = A * I_1 + C * I_n - 1.0;
     // double E4 = E6 + B * I_4;
     // E6 = E6 + B * I_6;
@@ -94,8 +94,8 @@ double StrucHOG2D::get_scaled_modulus() {
 // Stress functions
 double StrucHOG2D::stress(const kinematics::kinematics<4> &kin, double stress[4]) {
     double I_n = (A + C) * kin.I_n;
-    double I_4 = ddot(H4, kin.C) + I_n - 1.0;
-    double I_6 = ddot(H6, kin.C) + I_n - 1.0;
+    double I_4 = ddot2D(H4, kin.C) + I_n - 1.0;
+    double I_6 = ddot2D(H6, kin.C) + I_n - 1.0;
     // double E6 = A * kin.I_1 + C * kin.I_n - 1.0;
     // double E4 = E6 + B * I_4;
     // E6 = E6 + B * I_6;
