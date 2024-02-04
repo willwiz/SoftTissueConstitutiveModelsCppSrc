@@ -33,7 +33,7 @@ void add_drift(
     const int n
 ) {
     double drift = pars[3];
-    for (size_t i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++) {
         drift = drift + dt[i] * pars[4];
         stress_inout[i] = stress_inout[i] + drift * (1 / sqrt(strain[i]));
     }
@@ -62,7 +62,7 @@ double residual_body_general_stacked(
 ) {
     double res = 0.0;
     double res_protocol;
-    for (size_t i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++) {
         res_protocol = 0.0;
         for (int k = n[i]; k < n[i + 1]; k++) {
             res_protocol = res_protocol + norm_func(sims[k], stress[k], strain[k]);
@@ -78,7 +78,7 @@ double calc_objective_general_stacked(
     double stress[], double dt[], double weight[], int n[]
 ) {
     double *sims = new double[n[4]]();
-    for (size_t i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++) {
         simulate_general<matlaw>(
             pars, fiber, visco, Tf, Cmax, &strain[n[i]], &dt[n[i]], &sims[n[i]], n[i + 1] - n[i]
         );
@@ -95,9 +95,9 @@ double residual_body_general(
 ) {
     double res = 0.0;
     double res_protocol;
-    for (size_t k = 0; k < nset; k++) {
+    for (int k = 0; k < nset; k++) {
         res_protocol = 0.0;
-        for (size_t i = index[select[k]]; i <= index[select[k] + 1]; i++) {
+        for (int i = index[select[k]]; i <= index[select[k] + 1]; i++) {
             res_protocol = res_protocol + norm_func(sims[i], stress[i], strain[i]);
         }
         res = res + weight[k] * res_protocol;

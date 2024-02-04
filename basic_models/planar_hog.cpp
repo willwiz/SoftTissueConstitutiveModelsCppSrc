@@ -1,5 +1,5 @@
-#include "../kinematics/tensor_algebra.hpp"
 #include "planar_hog.hpp"
+#include "../kinematics/tensor_algebra.hpp"
 #include <algorithm>
 #include <cmath>
 

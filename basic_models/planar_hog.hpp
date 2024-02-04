@@ -7,10 +7,11 @@ namespace constitutive_models {
 
 class PlanarHog3D : public MatLaw3D<9> {
   public:
-    double k1, k2;
-    double m[9];
+    double k1;
+    double k2;
     double E1;
     double E2;
+    double m[9];
 
     PlanarHog3D();
     ~PlanarHog3D();
