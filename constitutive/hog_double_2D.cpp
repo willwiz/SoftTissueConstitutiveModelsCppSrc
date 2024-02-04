@@ -1,6 +1,6 @@
+#include "hog_double_2D.hpp"
 #include "../kinematics/kinematics.hpp"
 #include "../kinematics/tensor_algebra.hpp"
-#include "hog_double_2D.hpp"
 #include <cmath>
 
 /*----------------------------------------------------------------------
@@ -19,13 +19,21 @@ namespace constitutive_models {
  * COMMENTS:
  *
  *******************************************************************************/
-HOGDouble2D::HOGDouble2D(double k1, double k2, double theta, double alpha) {
+
+HOGDouble2D::HOGDouble2D() : E1{}, E2{} {};
+HOGDouble2D::~HOGDouble2D(){};
+
+HOGDouble2D::HOGDouble2D(double k1, double k2, double theta, double alpha) : E1{}, E2{} {
     this->set_pars(k1, k2, theta, alpha);
+};
+
+HOGDouble2D::HOGDouble2D(double k1, double k2, double theta, double alpha, double Cmax[]) {
+    this->set_pars(k1, k2, theta, alpha, Cmax);
 };
 
 void HOGDouble2D::set_pars(double k1, double k2, double theta, double alpha) {
 
-    this->k1 = k1;
+    this->k1 = 0.5 * k1;
     this->k2 = k2;
 
     double ca4 = cos(theta + alpha);
@@ -44,13 +52,23 @@ void HOGDouble2D::set_pars(double k1, double k2, double theta, double alpha) {
     this->m6[3] = sa6 * sa6;
 }
 
+void HOGDouble2D::set_pars(double k1, double k2, double theta, double alpha, double Cmax[]) {
+    this->set_pars(k1, k2, theta, alpha);
+    E1 = ddot2D(m4, Cmax) - 1;
+    this->k1 = k1 / E1;
+    this->E2 = E1 * E1;
+}
+
+double HOGDouble2D::get_scaled_modulus() {
+    return k1 * exp(-k2 * E2);
+}
 // Stress functions
 double HOGDouble2D::stress(const kinematics::kinematics<4> &kin, double stress[4]) {
 
     double I_4 = ddot2D(m4, kin.C) - 1;
     double I_6 = ddot2D(m6, kin.C) - 1;
-    double dWd4 = k1 * I_4 * exp(k2 * I_4 * I_4);
-    double dWd6 = k1 * I_6 * exp(k2 * I_6 * I_6);
+    double dWd4 = k1 * I_4 * exp(k2 * I_4 * I_4 - E2);
+    double dWd6 = k1 * I_6 * exp(k2 * I_6 * I_6 - E2);
     for (int i = 0; i < 4; i++) {
         stress[i] = dWd4 * m4[i] + dWd6 * m6[i];
     }

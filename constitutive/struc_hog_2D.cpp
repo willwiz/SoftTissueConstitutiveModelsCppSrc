@@ -1,6 +1,6 @@
+#include "struc_hog_2D.hpp"
 #include "../kinematics/kinematics.hpp"
 #include "../kinematics/tensor_algebra.hpp"
-#include "struc_hog_2D.hpp"
 #include <cmath>
 
 /*----------------------------------------------------------------------
@@ -44,7 +44,7 @@ void StrucHOG2D::set_pars(
     this->k2 = k2;
     this->A = 2.0 * kop * kip;
     this->B = 2.0 * kop * (1.0 - 2.0 * kip);
-    this->C = 1.0 - 3.0 * A - B;
+    this->C = 1.0 - 2.0 * A - B; // Because this is 2D we add back the A, i.e. C = A+C
 
     double ca4 = cos(theta + alpha);
     double sa4 = sin(theta + alpha);
@@ -75,13 +75,10 @@ void StrucHOG2D::set_pars(
     this->set_pars(k1, k2, theta, alpha, beta, kip, kop);
 
     double det = Cmax[0] * Cmax[3] - Cmax[1] * Cmax[1];
-    // double I_n = 1.0 / det;
+    double I_n = C / det - 1.0;
     // double I_1 = Cmax[0] + Cmax[3] + I_n;
-    double I_4 = ddot2D(H4, Cmax);
-    double I_6 = ddot2D(H6, Cmax);
-    // double E6 = A * I_1 + C * I_n - 1.0;
-    // double E4 = E6 + B * I_4;
-    // E6 = E6 + B * I_6;
+    double I_4 = ddot2D(H4, Cmax) + I_n;
+    double I_6 = ddot2D(H6, Cmax) + I_n;
     E1 = 0.5 * (I_4 + I_6);
     this->k1 = k1 / E1;
     this->E2 = E1 * E1;
@@ -93,9 +90,9 @@ double StrucHOG2D::get_scaled_modulus() {
 
 // Stress functions
 double StrucHOG2D::stress(const kinematics::kinematics<4> &kin, double stress[4]) {
-    double I_n = (A + C) * kin.I_n;
-    double I_4 = ddot2D(H4, kin.C) + I_n - 1.0;
-    double I_6 = ddot2D(H6, kin.C) + I_n - 1.0;
+    double I_n = C * kin.I_n - 1.0;
+    double I_4 = ddot2D(H4, kin.C) + I_n;
+    double I_6 = ddot2D(H6, kin.C) + I_n;
     // double E6 = A * kin.I_1 + C * kin.I_n - 1.0;
     // double E4 = E6 + B * I_4;
     // E6 = E6 + B * I_6;
@@ -105,7 +102,7 @@ double StrucHOG2D::stress(const kinematics::kinematics<4> &kin, double stress[4]
     for (int i = 0; i < 4; i++) {
         stress[i] = dWd4 * H4[i] + dWd6 * H6[i];
     }
-    return (A + C) * (dWd4 + dWd6);
+    return C * (dWd4 + dWd6);
 }
 
 void StrucHOG2D::stress(double args[4], double stress[4]) {
@@ -113,7 +110,7 @@ void StrucHOG2D::stress(double args[4], double stress[4]) {
     kinematics::deformation2D kin(args);
     double p = this->stress(kin, stress);
     for (int i = 0; i < 4; i++) {
-        stress[i] = stress[i] - p * kin.I_n * kin.Cinv[i];
+        stress[i] = stress[i] - (p * kin.I_n) * kin.Cinv[i];
     }
 }
 

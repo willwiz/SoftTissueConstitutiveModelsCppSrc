@@ -1,6 +1,6 @@
+#include "hog_2D.hpp"
 #include "../kinematics/kinematics.hpp"
 #include "../kinematics/tensor_algebra.hpp"
-#include "hog_2D.hpp"
 #include <algorithm>
 #include <cmath>
 
