@@ -22,9 +22,9 @@ class ThoracicDefaultBase : public constitutive_models::MatLawTime<4> {
 
   public:
     ThoracicDefaultBase(double pars[], double fiber[])
-        : m_matrix(pars[0]), m_elastin(pars[1], 0.0, fiber[0], fiber[1]),
-          m_muscle(pars[2], pars[3], fiber[0], fiber[2]),
-          m_collagen(pars[4], pars[5], fiber[0], fiber[3], -fiber[3], ctv::M_kip, ctv::M_kop) {
+        : m_matrix(pars[0]), m_elastin(pars[1], 0.0, fiber[0], 0.5),
+          m_muscle(pars[2], pars[3], fiber[0], fiber[1]),
+          m_collagen(pars[4], pars[5], fiber[0], fiber[1], -fiber[1], ctv::M_kip, ctv::M_kop) {
     }
 
     ThoracicDefaultBase(double pars[], double fiber[], double Cmax[])
