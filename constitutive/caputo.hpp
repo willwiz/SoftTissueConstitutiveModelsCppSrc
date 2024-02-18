@@ -45,8 +45,8 @@ template <int dim> class caputo_init_vec : public caputo_init {
 
     ~caputo_init_vec();
 
-    void caputo_iter(double fn[], double dt, double v[]);
-    void diffeq_iter(double fn[], double dt, double v[]);
+    void caputo_iter(const double fn[], double dt, double v[]);
+    void diffeq_iter(const double fn[], double dt, double v[]);
 };
 
 typedef caputo_init_vec<4> caputo_init_4;
@@ -54,9 +54,9 @@ typedef caputo_init_vec<4> caputo_init_4;
 double interpolate1D_newton_linear(double p1, double p2, double t);
 double extrapolate1D_newton_linear(double p1, double p2, double t);
 
-double interpolate_caputo_parameter_arr(const double alpha, const double arr[100]);
-double interpolate_caputo_parameter_beta(const double alpha, const double arr[100]);
-double interpolate_caputo_parameter_taus(const double alpha, const double arr[100]);
+double interpolate_caputo_parameter_arr(double alpha, const double arr[100]);
+double interpolate_caputo_parameter_beta(double alpha, const double arr[100]);
+double interpolate_caputo_parameter_taus(double alpha, const double arr[100]);
 
 extern const double betam[10][100];
 extern const double taum[9][100];

@@ -23,15 +23,15 @@ namespace constitutive_models {
 Hog2D::Hog2D() : E1{}, E2{} {};
 Hog2D::~Hog2D(){};
 
-Hog2D::Hog2D(double k1, double k2, double theta) : E1{}, E2{} {
+Hog2D::Hog2D(const double k1, const double k2, const double theta) : E1{}, E2{} {
     this->set_pars(k1, k2, theta);
 };
 
-Hog2D::Hog2D(double k1, double k2, double theta, double Cmax[]) {
+Hog2D::Hog2D(const double k1, const double k2, const double theta, const double Cmax[]) {
     this->set_pars(k1, k2, theta, Cmax);
 };
 
-void Hog2D::set_pars(double k1, double k2, double theta) {
+void Hog2D::set_pars(const double k1, const double k2, const double theta) {
     this->k1 = k1;
     this->k2 = k2;
     double c = cos(theta);
@@ -43,7 +43,7 @@ void Hog2D::set_pars(double k1, double k2, double theta) {
 }
 
 // Scaled version
-void Hog2D::set_pars(double k1, double k2, double theta, double Cmax[]) {
+void Hog2D::set_pars(const double k1, const double k2, const double theta, const double Cmax[]) {
     this->set_pars(k1, k2, theta);
     E1 = ddot2D(m, Cmax) - 1;
     this->k1 = k1 / E1;
@@ -66,7 +66,7 @@ double Hog2D::stress(const kinematics::kinematics<4> &kin, double stress[4]) {
     return 0.0;
 }
 
-void Hog2D::stress(double args[4], double stress[4]) {
+void Hog2D::stress(const double args[4], double stress[4]) {
 
     kinematics::deformation2D kin(args);
     (void)this->stress(kin, stress);

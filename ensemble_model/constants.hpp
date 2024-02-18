@@ -2,7 +2,7 @@
 
 #define _USE_MATH_DEFINES
 
-namespace ensemble {
+namespace ctv {
 
 extern const double p_fiber = 0.001;
 extern const double p_alpha = 1.0;
@@ -21,4 +21,4 @@ extern const double M_kop = 0.424285714285714;
 
 extern const double M_ideal_alpha = M_PI_4;
 
-} // namespace ensemble
+} // namespace ctv

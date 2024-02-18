@@ -160,7 +160,8 @@ template <int dim>
 caputo_init_vec<dim>::caputo_init_vec(double alpha, double Tf, double delta)
     : caputo_init(alpha, Tf, delta), Q{}, f_prev{} {};
 
-template <int dim> void caputo_init_vec<dim>::caputo_iter(double fn[], double dt, double v[]) {
+template <int dim>
+void caputo_init_vec<dim>::caputo_iter(const double fn[], double dt, double v[]) {
 
     int krow;
 
@@ -184,7 +185,8 @@ template <int dim> void caputo_init_vec<dim>::caputo_iter(double fn[], double dt
 }
 
 // The fractional differential equation
-template <int dim> void caputo_init_vec<dim>::diffeq_iter(double fn[], double dt, double v[]) {
+template <int dim>
+void caputo_init_vec<dim>::diffeq_iter(const double fn[], double dt, double v[]) {
 
     int krow;
 
@@ -244,7 +246,7 @@ double extrapolate1D_newton_linear(double p1, double p2, double t) {
     return p1 - (1.0 - t) * (p2 - p1);
 }
 
-double interpolate_caputo_parameter_arr(const double alpha, const double arr[100]) {
+double interpolate_caputo_parameter_arr(double alpha, const double arr[100]) {
     double as, temp;
     int an;
 
@@ -261,7 +263,7 @@ double interpolate_caputo_parameter_arr(const double alpha, const double arr[100
     }
 }
 
-double interpolate_caputo_parameter_beta(const double alpha, const double arr[100]) {
+double interpolate_caputo_parameter_beta(double alpha, const double arr[100]) {
     double as, temp;
     int an;
 
@@ -278,7 +280,7 @@ double interpolate_caputo_parameter_beta(const double alpha, const double arr[10
     }
 }
 
-double interpolate_caputo_parameter_taus(const double alpha, const double arr[100]) {
+double interpolate_caputo_parameter_taus(double alpha, const double arr[100]) {
     double as, temp;
     int an;
 

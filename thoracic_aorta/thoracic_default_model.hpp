@@ -2,16 +2,16 @@
 
 #define _USE_MATH_DEFINES
 
-#include "../CTvalues_optimization.hpp"
 #include "../constitutive/fractional.hpp"
 #include "../constitutive/hog_double_2D.hpp"
 #include "../constitutive/neohookean.hpp"
 #include "../constitutive/planar_hog.hpp"
 #include "../constitutive/struc_hog_2D.hpp"
 #include "../interfaces.hpp"
+#include "constants.hpp"
 #include <cmath>
 
-namespace sim {
+namespace thoracic {
 
 class ThoracicDefaultBase : public constitutive_models::MatLawTime<4> {
   protected:
@@ -24,15 +24,13 @@ class ThoracicDefaultBase : public constitutive_models::MatLawTime<4> {
     ThoracicDefaultBase(double pars[], double fiber[])
         : m_matrix(pars[0]), m_elastin(pars[1], 0.0, fiber[0], 0.5),
           m_muscle(pars[2], pars[3], fiber[0], fiber[1]),
-          m_collagen(pars[4], pars[5], fiber[0], fiber[1], -fiber[1], ctv::M_kip, ctv::M_kop) {
+          m_collagen(pars[4], pars[5], fiber[0], fiber[1], -fiber[1], M_kip, M_kop) {
     }
 
     ThoracicDefaultBase(double pars[], double fiber[], double Cmax[])
         : m_matrix(pars[0]), m_elastin(pars[1], 0.0, fiber[0], 0.5),
           m_muscle(pars[2], pars[3], fiber[0], fiber[1], Cmax),
-          m_collagen(
-              pars[4], pars[5], fiber[0], fiber[1], -fiber[1], ctv::M_kip, ctv::M_kop, Cmax
-          ) {
+          m_collagen(pars[4], pars[5], fiber[0], fiber[1], -fiber[1], M_kip, M_kop, Cmax) {
     }
 
     ~ThoracicDefaultBase() {
@@ -85,4 +83,4 @@ class ThoracicDefaultVEScaled : public ThoracicDefaultVEBase {
     }
 };
 
-} // namespace sim
+} // namespace thoracic

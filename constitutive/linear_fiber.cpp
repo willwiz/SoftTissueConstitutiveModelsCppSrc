@@ -1,6 +1,6 @@
+#include "linear_fiber.hpp"
 #include "../kinematics/kinematics.hpp"
 #include "../kinematics/tensor_algebra.hpp"
-#include "linear_fiber.hpp"
 #include <cmath>
 
 namespace constitutive_models {
@@ -41,7 +41,7 @@ double LinearFiber::stress(const kinematics::kinematics<4> &kin, double stress[4
     return 0.0;
 }
 
-void LinearFiber::stress(double args[4], double stress[4]) {
+void LinearFiber::stress(const double args[4], double stress[4]) {
 
     kinematics::deformation2D kin(args);
     (void)this->stress(kin, stress);

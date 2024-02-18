@@ -15,6 +15,6 @@ class mooney : public MatLaw<4> {
     void set_pars(double mu, double b);
     double get_scaled_modulus();
     double stress(const kinematics::kinematics<4> &kin, double stress[]);
-    void stress(double args[], double stress[]);
+    void stress(const double args[], double stress[]);
 };
 } // namespace constitutive_models

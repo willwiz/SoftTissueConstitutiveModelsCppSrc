@@ -1,6 +1,6 @@
+#include "planar_hog.hpp"
 #include "../kinematics/kinematics.hpp"
 #include "../kinematics/tensor_algebra.hpp"
-#include "planar_hog.hpp"
 #include <algorithm>
 #include <cmath>
 
@@ -28,7 +28,7 @@ PlanarHog2D::PlanarHog2D(double k1, double k2, double theta, double kappa)
     this->set_pars(theta, kappa);
 };
 
-PlanarHog2D::PlanarHog2D(double k1, double k2, double theta, double kappa, double Cmax[])
+PlanarHog2D::PlanarHog2D(double k1, double k2, double theta, double kappa, const double Cmax[])
     : k1(k1), k2(k2) {
     this->set_pars(theta, kappa, Cmax);
 };
@@ -46,7 +46,7 @@ void PlanarHog2D::set_pars(double theta, double kappa) {
 }
 
 // Scaled version
-void PlanarHog2D::set_pars(double theta, double kappa, double Cmax[]) {
+void PlanarHog2D::set_pars(double theta, double kappa, const double Cmax[]) {
     this->set_pars(theta, kappa);
     E1 = ddot2D(m, Cmax) - 1;
     k1 = k1 / E1;
@@ -69,7 +69,7 @@ double PlanarHog2D::stress(const kinematics::kinematics<4> &kin, double stress[4
     return 0.0;
 }
 
-void PlanarHog2D::stress(double args[4], double stress[4]) {
+void PlanarHog2D::stress(const double args[4], double stress[4]) {
 
     kinematics::deformation2D kin(args);
     (void)this->stress(kin, stress);

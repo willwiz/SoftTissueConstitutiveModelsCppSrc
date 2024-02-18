@@ -1,5 +1,5 @@
-#include "../kinematics/kinematics.hpp"
 #include "fractional.hpp"
+#include "../kinematics/kinematics.hpp"
 #include <cmath>
 
 namespace constitutive_models {
@@ -25,7 +25,7 @@ double FractionalVE<dim>::stress(
 }
 
 template <int dim>
-FractionalVE3D<dim>::FractionalVE3D(MatLaw3D<dim> &law, const double alpha, const double Tf)
+FractionalVE3D<dim>::FractionalVE3D(MatLaw3D<dim> &law, double alpha, double Tf)
     : store(alpha, Tf, 0.0), m_law(&law) {
 }
 
@@ -34,7 +34,7 @@ template <int dim> FractionalVE3D<dim>::~FractionalVE3D() {
 
 template <int dim>
 void FractionalVE3D<dim>::stress(
-    const kinematics::kinematics<dim> &kin, const double dt, double stress[]
+    const kinematics::kinematics<dim> &kin, double dt, double stress[]
 ) {
     double frac[dim];
 

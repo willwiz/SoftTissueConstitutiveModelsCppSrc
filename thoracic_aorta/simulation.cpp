@@ -1,6 +1,6 @@
 #include "simulation.hpp"
-#include "models.hpp"
-#include "templates.hpp"
+#include "../simulate/templates.hpp"
+#include "thoracic_default_model.hpp"
 
 /*----------------------------------------------------------------------
  |  This file provides the definitions of the different model forms
@@ -13,9 +13,7 @@
  |  Dependencies: None
  -----------------------------------------------------------------------*/
 
-using namespace constitutive_models;
-
-namespace sim {
+namespace thoracic {
 
 /*----------------------------------------------------------------------
  |  This provides the main models in the full constitutive model
@@ -36,29 +34,29 @@ void thoracic_default_get_model_parameters_scaled(
 |  Some basic models
 -----------------------------------------------------------------------*/
 
-void planar_elastin_matrix_simulate(
-    double pars[], double fiber[], double caputo[], double Tf, double Cmax[], double args[],
-    double dt[], double stress[], int n
-) {
-    residuals::simulate<PlanarElastinMatrix>(pars, fiber, caputo, Tf, Cmax, args, dt, stress, n);
-}
+// void planar_elastin_matrix_simulate(
+//     double pars[], double fiber[], double caputo[], double Tf, double Cmax[], double args[],
+//     double dt[], double stress[], int n
+// ) {
+//     simulate::simulate<PlanarElastinMatrix>(pars, fiber, caputo, Tf, Cmax, args, dt, stress, n);
+// }
 
-void thoracic_default_ve_simulate_standard(
-    double pars[], double fiber[], double caputo[], double Tf, double Cmax[], double args[],
-    double dt[], double stress[], int n
-) {
-    residuals::simulate<ThoracicDefaultVEStandard>(
-        pars, fiber, caputo, Tf, Cmax, args, dt, stress, n
-    );
-}
+// void thoracic_default_ve_simulate_standard(
+//     const double pars[], const double fiber[], const double caputo[], double Tf,
+//     const double Cmax[], const double args[], const double dt[], double stress[], int n
+// ) {
+//     residuals::simulate<ThoracicDefaultVEStandard>(
+//         pars, fiber, caputo, Tf, Cmax, args, dt, stress, n
+//     );
+// }
 
-void thoracic_default_ve_simulate_scaled(
-    double pars[], double fiber[], double caputo[], double Tf, double Cmax[], double args[],
-    double dt[], double stress[], int n
-) {
-    residuals::simulate<ThoracicDefaultVEScaled>(
-        pars, fiber, caputo, Tf, Cmax, args, dt, stress, n
-    );
-}
+// void thoracic_default_ve_simulate_scaled(
+//     const double pars[], const double fiber[], const double caputo[], double Tf,
+//     const double Cmax[], const double args[], const double dt[], double stress[], int n
+// ) {
+//     residuals::simulate<ThoracicDefaultVEScaled>(
+//         pars, fiber, caputo, Tf, Cmax, args, dt, stress, n
+//     );
+// }
 
-} // namespace sim
+} // namespace thoracic

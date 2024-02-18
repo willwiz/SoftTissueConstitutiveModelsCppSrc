@@ -1,6 +1,6 @@
+#include "template.hpp"
 #include "../CTvalues_optimization.hpp"
 #include "../kinematics/kinematics.hpp"
-#include "template.hpp"
 #include <cmath>
 
 namespace templates {

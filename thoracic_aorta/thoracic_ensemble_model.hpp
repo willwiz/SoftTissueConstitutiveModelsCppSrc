@@ -1,16 +1,12 @@
 #pragma once
-
-#define _USE_MATH_DEFINES
-
 #include "../constitutive/fractional.hpp"
 #include "../constitutive/neohookean.hpp"
 #include "../constitutive/planar_hog.hpp"
 #include "../constitutive/struc_hog_2D.hpp"
 #include "../interfaces.hpp"
-#include "constants.hpp"
 #include <cmath>
 
-namespace ensemble {
+namespace thoracic {
 
 class ThoracicFullEnsembleBase : public constitutive_models::MatLawTime<4> {
   protected:
@@ -20,21 +16,8 @@ class ThoracicFullEnsembleBase : public constitutive_models::MatLawTime<4> {
     constitutive_models::StrucHOG2D m_collagen;
 
   public:
-    ThoracicFullEnsembleBase(double pars[])
-        : m_matrix(0), m_elastin(pars[1], 0.0, 0.0, 0.5), m_muscle(pars[2], pars[3], 0.0, 0.5),
-          m_collagen(
-              pars[4], pars[5], 0.0, ctv::M_ideal_alpha, -ctv::M_ideal_alpha, ctv::M_kip, ctv::M_kop
-          ) {
-    }
-
-    ThoracicFullEnsembleBase(double pars[], double Cmax[])
-        : m_matrix(0), m_elastin(pars[1], 0.0, 0.0, 0.5),
-          m_muscle(pars[2], pars[3], 0.0, 0.5, Cmax),
-          m_collagen(
-              pars[4], pars[5], 0.0, ctv::M_ideal_alpha, -ctv::M_ideal_alpha, ctv::M_kip,
-              ctv::M_kop, Cmax
-          ) {
-    }
+    ThoracicFullEnsembleBase(double pars[]);
+    ThoracicFullEnsembleBase(double pars[], double Cmax[]);
 
     ~ThoracicFullEnsembleBase() {
     }
@@ -66,4 +49,4 @@ class ThoracicFullEnsembleVE : public ThoracicFullEnsembleBase {
     void stress(const kinematics::kinematics<4> &kin, const double dt, double stress[]);
 };
 
-} // namespace ensemble
+} // namespace thoracic

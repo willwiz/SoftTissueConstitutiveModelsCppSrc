@@ -27,7 +27,7 @@ HOGDouble2D::HOGDouble2D(double k1, double k2, double theta, double alpha) : E1{
     this->set_pars(k1, k2, theta, alpha);
 };
 
-HOGDouble2D::HOGDouble2D(double k1, double k2, double theta, double alpha, double Cmax[]) {
+HOGDouble2D::HOGDouble2D(double k1, double k2, double theta, double alpha, const double Cmax[]) {
     this->set_pars(k1, k2, theta, alpha, Cmax);
 };
 
@@ -52,7 +52,7 @@ void HOGDouble2D::set_pars(double k1, double k2, double theta, double alpha) {
     this->m6[3] = sa6 * sa6;
 }
 
-void HOGDouble2D::set_pars(double k1, double k2, double theta, double alpha, double Cmax[]) {
+void HOGDouble2D::set_pars(double k1, double k2, double theta, double alpha, const double Cmax[]) {
     this->set_pars(k1, k2, theta, alpha);
     E1 = ddot2D(m4, Cmax) - 1;
     this->k1 = k1 / E1;
@@ -75,7 +75,7 @@ double HOGDouble2D::stress(const kinematics::kinematics<4> &kin, double stress[4
     return 0.0;
 }
 
-void HOGDouble2D::stress(double args[4], double stress[4]) {
+void HOGDouble2D::stress(const double args[4], double stress[4]) {
 
     kinematics::deformation2D kin(args);
     (void)this->stress(kin, stress);

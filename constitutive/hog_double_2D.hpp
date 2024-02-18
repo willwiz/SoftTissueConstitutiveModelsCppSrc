@@ -15,13 +15,13 @@ class HOGDouble2D : public MatLaw<4> {
     HOGDouble2D();
     ~HOGDouble2D();
     HOGDouble2D(double k1, double k2, double theta, double alpha);
-    HOGDouble2D(double k1, double k2, double theta, double alpha, double Cmax[]);
+    HOGDouble2D(double k1, double k2, double theta, double alpha, const double Cmax[]);
 
     void set_pars(double k1, double k2, double theta, double alpha);
-    void set_pars(double k1, double k2, double theta, double alpha, double Cmax[]);
+    void set_pars(double k1, double k2, double theta, double alpha, const double Cmax[]);
     double get_scaled_modulus();
     double stress(const kinematics::kinematics<4> &kin, double stress[4]);
-    void stress(double args[4], double stress[4]);
+    void stress(const double args[4], double stress[4]);
 };
 
 } // namespace constitutive_models

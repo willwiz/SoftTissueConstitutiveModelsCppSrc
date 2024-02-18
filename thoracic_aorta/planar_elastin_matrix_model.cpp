@@ -1,8 +1,4 @@
-#define _USE_MATH_DEFINES
-
 #include "planar_elastin_matrix_model.hpp"
-#include "constants.hpp"
-#include <cmath>
 
 /*----------------------------------------------------------------------
  |  This file provides the definitions of the different model forms
@@ -17,7 +13,7 @@
 
 using namespace constitutive_models;
 
-namespace sim {
+namespace thoracic {
 
 /*----------------------------------------------------------------------
  |  This provides the main models in the full constitutive model
@@ -28,16 +24,14 @@ void PlanarElastinMatrix::get_scaled_pars(double pars[]) {
     pars[1] = m_elastin.get_scaled_modulus();
 }
 
-void PlanarElastinMatrix::stress(
-    const kinematics::kinematics<4> &kin, const double dt, double stress[]
-) {
+void PlanarElastinMatrix::stress(const kinematics::kinematics<4> &kin, double dt, double stress[]) {
     double p = 0.0;
     double mat[4], el[4];
     p = m_matrix.stress(kin, mat);
     (void)m_elastin.stress(kin, el);
-    for (int j = 0; j < ctv::prob_dim; j++) {
+    for (int j = 0; j < 4; j++) {
         stress[j] = mat[j] + el[j] - p * kin.I_n * kin.Cinv[j];
     }
 }
 
-} // namespace sim
+} // namespace thoracic

@@ -1,6 +1,6 @@
 #define _USE_MATH_DEFINES
-
-#include "thoracic_default_model.hpp"
+#include "thoracic_ensemble_model.hpp"
+#include "constants.hpp"
 #include <cmath>
 
 /*----------------------------------------------------------------------
@@ -21,17 +21,24 @@ namespace thoracic {
 /*----------------------------------------------------------------------
  |  This provides the main models in the full constitutive model
  -----------------------------------------------------------------------*/
-
-void ThoracicDefaultBase::get_scaled_pars(double pars[]) {
-    pars[0] = m_matrix.mu;
-    pars[1] = m_elastin.k1;
-    pars[2] = m_muscle.get_scaled_modulus();
-    pars[3] = m_muscle.k2;
-    pars[4] = m_collagen.get_scaled_modulus();
-    pars[5] = m_collagen.k2;
+ThoracicFullEnsembleBase::ThoracicFullEnsembleBase(double pars[])
+    : m_matrix(0), m_elastin(pars[1], 0.0, 0.0, 0.5), m_muscle(pars[2], pars[3], 0.0, 0.5),
+      m_collagen(pars[4], pars[5], 0.0, M_ideal_alpha, -M_ideal_alpha, M_kip, M_kop) {
 }
 
-void ThoracicDefaultBase::stress(
+ThoracicFullEnsembleBase::ThoracicFullEnsembleBase(double pars[], double Cmax[])
+    : m_matrix(0), m_elastin(pars[1], 0.0, 0.0, 0.5), m_muscle(pars[2], pars[3], 0.0, 0.5, Cmax),
+      m_collagen(pars[4], pars[5], 0.0, M_ideal_alpha, -M_ideal_alpha, M_kip, M_kop, Cmax) {
+}
+
+void ThoracicFullEnsembleBase::get_scaled_pars(double pars[]) {
+    pars[0] = m_matrix.mu;
+    pars[1] = m_collagen.get_scaled_modulus();
+    pars[2] = m_collagen.k2;
+    pars[3] = m_elastin.get_scaled_modulus();
+}
+
+void ThoracicFullEnsembleBase::stress(
     const kinematics::kinematics<4> &kin, const double dt, double stress[]
 ) {
     double p = 0.0;
@@ -45,7 +52,7 @@ void ThoracicDefaultBase::stress(
     }
 }
 
-void ThoracicDefaultVEBase::stress(
+void ThoracicFullEnsembleVE::stress(
     const kinematics::kinematics<4> &kin, const double dt, double stress[]
 ) {
     double p = 0.0;

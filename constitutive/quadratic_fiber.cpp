@@ -1,6 +1,6 @@
+#include "quadratic_fiber.hpp"
 #include "../kinematics/kinematics.hpp"
 #include "../kinematics/tensor_algebra.hpp"
-#include "quadratic_fiber.hpp"
 #include <cmath>
 
 namespace constitutive_models {
@@ -40,7 +40,7 @@ double QuadraticFiber::stress(const kinematics::kinematics<4> &kin, double stres
     return 0.0;
 }
 
-void QuadraticFiber::stress(double args[4], double stress[4]) {
+void QuadraticFiber::stress(const double args[4], double stress[4]) {
 
     kinematics::deformation2D kin(args);
     (void)this->stress(kin, stress);

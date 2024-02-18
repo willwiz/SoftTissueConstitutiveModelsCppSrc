@@ -31,7 +31,7 @@ StrucHOG2D::StrucHOG2D(
 
 StrucHOG2D::StrucHOG2D(
     double k1, double k2, double theta, double alpha, double beta, double kip, double kop,
-    double Cmax[]
+    const double Cmax[]
 ) {
     this->set_pars(k1, k2, theta, alpha, beta, kip, kop, Cmax);
 };
@@ -39,6 +39,8 @@ StrucHOG2D::StrucHOG2D(
 void StrucHOG2D::set_pars(
     double k1, double k2, double theta, double alpha, double beta, double kip, double kop
 ) {
+    double m4[4], m6[4];
+    double ca, sa;
 
     this->k1 = k1;
     this->k2 = k2;
@@ -46,37 +48,39 @@ void StrucHOG2D::set_pars(
     this->B = 2.0 * kop * (1.0 - 2.0 * kip);
     this->C = 1.0 - 2.0 * A - B; // Because this is 2D we add back the A, i.e. C = A+C
 
-    double ca4 = cos(theta + alpha);
-    double sa4 = sin(theta + alpha);
-    double ca6 = cos(theta + beta);
-    double sa6 = sin(theta + beta);
+    ca = cos(theta + alpha);
+    sa = sin(theta + alpha);
 
-    this->m4[0] = ca4 * ca4;
-    this->m4[1] = ca4 * sa4;
-    this->m4[2] = m4[1];
-    this->m4[3] = sa4 * sa4;
+    m4[0] = ca * ca;
+    m4[1] = ca * sa;
+    m4[2] = m4[1];
+    m4[3] = sa * sa;
 
-    this->m6[0] = ca6 * ca6;
-    this->m6[1] = ca6 * sa6;
-    this->m6[2] = m6[1];
-    this->m6[3] = sa6 * sa6;
+    ca = cos(theta + beta);
+    sa = sin(theta + beta);
+    m6[0] = ca * ca;
+    m6[1] = ca * sa;
+    m6[2] = m6[1];
+    m6[3] = sa * sa;
 
     for (int i = 0; i < 4; i++) {
-        this->H4[i] = A * id2d[i] + B * m4[i];
-        this->H6[i] = A * id2d[i] + B * m6[i];
+        this->H4[i] = this->H6[i] = A * id2d[i];
+        this->H4[i] = this->H4[i] + B * m4[i];
+        this->H6[i] = this->H6[i] + B * m6[i];
     }
+    this->H_33 = A + C;
 }
 
 // Scaled version
 void StrucHOG2D::set_pars(
     double k1, double k2, double theta, double alpha, double beta, double kip, double kop,
-    double Cmax[]
+    const double Cmax[]
 ) {
     this->set_pars(k1, k2, theta, alpha, beta, kip, kop);
 
     double det = Cmax[0] * Cmax[3] - Cmax[1] * Cmax[1];
-    double I_n = C / det - 1.0;
-    // double I_1 = Cmax[0] + Cmax[3] + I_n;
+    double I_n = H_33 / det - 1.0;
+
     double I_4 = ddot2D(H4, Cmax) + I_n;
     double I_6 = ddot2D(H6, Cmax) + I_n;
     E1 = 0.5 * (I_4 + I_6);
@@ -90,22 +94,18 @@ double StrucHOG2D::get_scaled_modulus() {
 
 // Stress functions
 double StrucHOG2D::stress(const kinematics::kinematics<4> &kin, double stress[4]) {
-    double I_n = C * kin.I_n - 1.0;
+    double I_n = H_33 * kin.I_n - 1.0;
     double I_4 = ddot2D(H4, kin.C) + I_n;
     double I_6 = ddot2D(H6, kin.C) + I_n;
-    // double E6 = A * kin.I_1 + C * kin.I_n - 1.0;
-    // double E4 = E6 + B * I_4;
-    // E6 = E6 + B * I_6;
     double dWd4 = k1 * I_4 * exp(k2 * (I_4 * I_4 - E2));
     double dWd6 = k1 * I_6 * exp(k2 * (I_6 * I_6 - E2));
-
     for (int i = 0; i < 4; i++) {
         stress[i] = dWd4 * H4[i] + dWd6 * H6[i];
     }
-    return C * (dWd4 + dWd6);
+    return H_33 * (dWd4 + dWd6);
 }
 
-void StrucHOG2D::stress(double args[4], double stress[4]) {
+void StrucHOG2D::stress(const double args[4], double stress[4]) {
 
     kinematics::deformation2D kin(args);
     double p = this->stress(kin, stress);

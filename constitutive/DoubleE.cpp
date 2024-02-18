@@ -1,7 +1,7 @@
 #define _USE_MATH_DEFINES
+#include "DoubleE.hpp"
 #include "../kinematics/kinematics.hpp"
 #include "../kinematics/tensor_algebra.hpp"
-#include "DoubleE.hpp"
 #include <cmath>
 
 namespace constitutive_models {
@@ -58,7 +58,7 @@ double DoubleE2D::stress(const kinematics::kinematics<4> &kin, double stress[4])
     return 0.0;
 }
 
-void DoubleE2D::stress(double args[], double stress[4]) {
+void DoubleE2D::stress(const double args[], double stress[4]) {
 
     kinematics::deformation2D kin(args);
     double p = this->stress(kin, stress);

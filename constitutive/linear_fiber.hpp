@@ -1,12 +1,10 @@
 #pragma once
 
-#include "../kinematics/kinematics.hpp"
 #include "../interfaces.hpp"
+#include "../kinematics/kinematics.hpp"
 
-namespace constitutive_models
-{
-  class LinearFiber: public MatLaw<4>
-  {
+namespace constitutive_models {
+class LinearFiber : public MatLaw<4> {
 
   public:
     double k;
@@ -18,7 +16,7 @@ namespace constitutive_models
 
     void set_pars(double mu, double theta, double alpha, double beta);
     double stress(const kinematics::kinematics<4> &kin, double stress[4]);
-    void stress(double args[4], double stress[4]);
-  };
+    void stress(const double args[4], double stress[4]);
+};
 
 } // namespace constitutive_models
