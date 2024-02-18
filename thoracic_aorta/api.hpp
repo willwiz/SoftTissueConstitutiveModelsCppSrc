@@ -3,17 +3,17 @@
 namespace thoracic {
 
 // Planar Elastin Model
-void planar_elastin_matrix_get_model_parameters_scaled(
+void thoracic_elastin_get_parameters(
     const double pars[], const double fiber[], const double visco[], double Tf, const double Cmax[],
     double pars_out[2]
 );
 
-void planar_elastin_matrix_simulate(
+void thoracic_elastin_simulate(
     const double pars[], const double fiber[], const double caputo[], double Tf,
     const double Cmax[], const double args[], const double dt[], double stress[], int n
 );
 
-double planar_elastin_matrix_residual(
+double thoracic_elastin_residual(
     const double pars[], const double fiber[], const double visco[], double Tf, const double Cmax[],
     const double args[], const double stress[], const double dt[], const double weights[],
     const double deltaCG[], const double hysteresis[], const double alphas[], const int index[],
@@ -22,19 +22,39 @@ double planar_elastin_matrix_residual(
 
 // Ensemble Model
 
-void thoracic_ensemble_get_model_parameters_scaled(
+void thoracic_ensemble_get_parameters(
     const double pars[], const double fiber[], const double visco[], double Tf, const double Cmax[],
-    double pars_out[2]
+    double pars_out[6]
 );
 
 void thoracic_ensemble_simulate(
-    double pars[], double visco[], double Tf, double Cmax[], double strain[], double dt[],
-    double out_stress[], int n
+    const double pars[], const double visco[], double Tf, const double Cmax[],
+    const double strain[], const double dt[], double out_stress[], int n
 );
 
 double thoracic_ensemble_residual(
-    double pars[], double visco[], double Tf, double Cmax[], double strain[], double stress[],
-    double dt[], double deltaCG[], double hysteresis, int n, int skip
+    const double pars[], const double visco[], double Tf, const double Cmax[],
+    const double strain[], const double stress[], const double dt[], const double deltaCG[],
+    double hysteresis, int n, int skip
+);
+
+// Full Model
+
+void thoracic_ve_get_parameters(
+    const double pars[], const double fiber[], const double visco[], double Tf, const double Cmax[],
+    double pars_out[10]
+);
+
+void thoracic_ve_simulate(
+    const double pars[], const double fiber[], const double caputo[], double Tf,
+    const double Cmax[], const double args[], const double dt[], double stress[], int n
+);
+
+double thoracic_ve_residual(
+    const double pars[], const double fiber[], const double visco[], double Tf, const double Cmax[],
+    const double args[], const double stress[], const double dt[], const double weights[],
+    const double deltaCG[], const double hysteresis[], const double alphas[], const int index[],
+    const int select[], int n, int nprot, int skip
 );
 
 } // namespace thoracic

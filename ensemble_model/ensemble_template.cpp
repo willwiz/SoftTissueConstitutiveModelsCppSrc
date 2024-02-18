@@ -13,7 +13,7 @@ void ensemble_simulate(
     double pars[], double visco[], double Tf, double Cmax[], double strain[], double dt[],
     double out_stress[], int n
 ) {
-    double vals[ctv::prob_dim];
+    double vals[4];
 
     kinematics::deformation_ensemble2D kin;
     matlaw law(pars, visco, Tf, Cmax);

@@ -1,4 +1,4 @@
-#include "planar_elastin_matrix_model.hpp"
+#include "thoracic_elastin_model.hpp"
 
 /*----------------------------------------------------------------------
  |  This file provides the definitions of the different model forms

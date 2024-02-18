@@ -22,18 +22,13 @@ class ThoracicFullEnsembleBase : public constitutive_models::MatLawTime<4> {
   public:
     ThoracicFullEnsembleBase(double pars[])
         : m_matrix(0), m_elastin(pars[1], 0.0, 0.0, 0.5), m_muscle(pars[2], pars[3], 0.0, 0.5),
-          m_collagen(
-              pars[4], pars[5], 0.0, ctv::M_ideal_alpha, -ctv::M_ideal_alpha, ctv::M_kip, ctv::M_kop
-          ) {
+          m_collagen(pars[4], pars[5], 0.0, M_ideal_alpha, -M_ideal_alpha, M_kip, M_kop) {
     }
 
     ThoracicFullEnsembleBase(double pars[], double Cmax[])
         : m_matrix(0), m_elastin(pars[1], 0.0, 0.0, 0.5),
           m_muscle(pars[2], pars[3], 0.0, 0.5, Cmax),
-          m_collagen(
-              pars[4], pars[5], 0.0, ctv::M_ideal_alpha, -ctv::M_ideal_alpha, ctv::M_kip,
-              ctv::M_kop, Cmax
-          ) {
+          m_collagen(pars[4], pars[5], 0.0, M_ideal_alpha, -M_ideal_alpha, M_kip, M_kop, Cmax) {
     }
 
     ~ThoracicFullEnsembleBase() {

@@ -1,6 +1,6 @@
 #define _USE_MATH_DEFINES
 
-#include "thoracic_default_model.hpp"
+#include "thoracic_ve_model.hpp"
 #include <cmath>
 
 /*----------------------------------------------------------------------
@@ -22,7 +22,7 @@ namespace thoracic {
  |  This provides the main models in the full constitutive model
  -----------------------------------------------------------------------*/
 
-void ThoracicDefaultBase::get_scaled_pars(double pars[]) {
+void ThoracicBase::get_scaled_pars(double pars[]) {
     pars[0] = m_matrix.mu;
     pars[1] = m_elastin.k1;
     pars[2] = m_muscle.get_scaled_modulus();
@@ -31,9 +31,7 @@ void ThoracicDefaultBase::get_scaled_pars(double pars[]) {
     pars[5] = m_collagen.k2;
 }
 
-void ThoracicDefaultBase::stress(
-    const kinematics::kinematics<4> &kin, const double dt, double stress[]
-) {
+void ThoracicBase::stress(const kinematics::kinematics<4> &kin, const double dt, double stress[]) {
     double p = 0.0;
     double mat[4], el[4], smc[4], col[4];
     p = m_matrix.stress(kin, mat);
@@ -45,7 +43,7 @@ void ThoracicDefaultBase::stress(
     }
 }
 
-void ThoracicDefaultVEBase::stress(
+void ThoracicVEBase::stress(
     const kinematics::kinematics<4> &kin, const double dt, double stress[]
 ) {
     double p = 0.0;
