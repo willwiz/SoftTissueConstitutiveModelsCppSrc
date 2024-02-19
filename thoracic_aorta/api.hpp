@@ -23,8 +23,7 @@ double thoracic_elastin_residual(
 // Ensemble Model
 
 void thoracic_ensemble_get_parameters(
-    const double pars[], const double fiber[], const double visco[], double Tf, const double Cmax[],
-    double pars_out[6]
+    const double pars[], const double visco[], double Tf, const double Cmax[], double pars_out[6]
 );
 
 void thoracic_ensemble_simulate(
@@ -35,7 +34,7 @@ void thoracic_ensemble_simulate(
 double thoracic_ensemble_residual(
     const double pars[], const double visco[], double Tf, const double Cmax[],
     const double strain[], const double stress[], const double dt[], const double deltaCG[],
-    double hysteresis, int n, int skip
+    double hysteresis, double data[], int n, int skip
 );
 
 // Full Model

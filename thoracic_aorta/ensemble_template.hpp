@@ -18,7 +18,13 @@ template <class matlaw, NormFunction nfunc, HysteresisFunction hfunc, PenaltyFun
 double calc_ensemble_objective(
     const double pars[], const double visco[], double Tf, const double Cmax[],
     const double strain[], const double stress[], const double dt[], const double deltaCG[],
-    double hysteresis, int n, int skip
+    double hysteresis, const double data[], int n, int skip
+);
+
+template <NormFunction nfunc>
+double ensemble_residual(
+    const double strain[], const double stress[], int n, int skip, const double sims[],
+    double baseline
 );
 
 } // namespace thoracic

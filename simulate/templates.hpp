@@ -6,8 +6,8 @@ namespace simulate {
 
 typedef double (*ResidualNorm)(const double, const double, const double);
 typedef double (*HysteresisFunc)(
-    const double *, const double *, const double *, const double *, const int *, const int *,
-    const int, const int
+    const double *, const double *, const double *, const double *, const int *, const int *, int,
+    int
 );
 typedef double (*Penalty)(const double *, const double *, const double *, const double *);
 typedef double (*ViscoCalculation)(const double *, const double *, const double);
@@ -40,6 +40,7 @@ inline double quart_quad_residual(const double sim, const double data, const dou
 
 inline double quadratic_residual(const double sim, const double data, const double strain);
 
+template <int dim>
 double hysteresis_body_null(
     const double sims[], const double deltaCG[], const double hysteresis[], const double weights[],
     const int index[], const int select[], const int nprot, const int skip

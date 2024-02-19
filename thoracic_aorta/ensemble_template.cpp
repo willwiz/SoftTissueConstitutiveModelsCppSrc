@@ -25,14 +25,14 @@ template <class matlaw, NormFunction nfunc, HysteresisFunction hfunc, PenaltyFun
 double calc_ensemble_objective(
     const double pars[], const double visco[], double Tf, const double Cmax[],
     const double strain[], const double stress[], const double dt[], const double deltaCG[],
-    double hysteresis, int n, int skip
+    double hysteresis, double data[], int n, int skip
 ) {
     double *sims = new double[n]();
     ensemble_simulate<matlaw>(pars, visco, Tf, Cmax, strain, dt, &sims[0], n);
     double res = ensemble_residual<nfunc>(strain, stress, n, skip, sims, pars[0]);
     double hyst = hfunc(sims, deltaCG, n, hysteresis);
     delete[] sims;
-    return (res + 10.0 * hyst) * (1.0 + pfunc(pars, visco));
+    return (res + 10.0 * hyst) * (1.0 + pfunc(pars, visco, data));
 }
 
 template <NormFunction nfunc>

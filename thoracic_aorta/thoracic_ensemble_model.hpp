@@ -16,15 +16,15 @@ class ThoracicEnsembleBase : public constitutive_models::MatLawTime<4> {
     constitutive_models::StrucHOG2D m_collagen;
 
   public:
-    ThoracicEnsembleBase(double pars[]);
-    ThoracicEnsembleBase(double pars[], double Cmax[]);
+    ThoracicEnsembleBase(const double pars[]);
+    ThoracicEnsembleBase(const double pars[], const double Cmax[]);
 
     ~ThoracicEnsembleBase() {
     }
 
     void get_scaled_pars(double pars[]);
 
-    void stress(const kinematics::kinematics<4> &kin, const double dt, double stress[]);
+    void stress(const kinematics::kinematics<4> &kin, double dt, double stress[]);
 };
 
 class ThoracicEnsembleVE : public ThoracicEnsembleBase {
@@ -33,12 +33,12 @@ class ThoracicEnsembleVE : public ThoracicEnsembleBase {
     constitutive_models::FractionalVE<4> collagen;
 
   public:
-    ThoracicEnsembleVE(double pars[], double visco[], double Tf)
+    ThoracicEnsembleVE(const double pars[], const double visco[], double Tf)
         : ThoracicEnsembleBase(pars), muscle(m_muscle, visco[0], Tf),
           collagen(m_collagen, visco[1], Tf) {
     }
 
-    ThoracicEnsembleVE(double pars[], double visco[], double Tf, double Cmax[])
+    ThoracicEnsembleVE(const double pars[], const double visco[], double Tf, const double Cmax[])
         : ThoracicEnsembleBase(pars, Cmax), muscle(m_muscle, visco[0], Tf),
           collagen(m_collagen, visco[1], Tf) {
     }

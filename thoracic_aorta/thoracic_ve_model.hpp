@@ -21,13 +21,13 @@ class ThoracicBase : public constitutive_models::MatLawTime<4> {
     constitutive_models::StrucHOG2D m_collagen;
 
   public:
-    ThoracicBase(double pars[], double fiber[])
+    ThoracicBase(const double pars[], const double fiber[])
         : m_matrix(pars[0]), m_elastin(pars[1], 0.0, fiber[0], 0.5),
           m_muscle(pars[2], pars[3], fiber[0], fiber[1]),
           m_collagen(pars[4], pars[5], fiber[0], fiber[1], -fiber[1], M_kip, M_kop) {
     }
 
-    ThoracicBase(double pars[], double fiber[], double Cmax[])
+    ThoracicBase(const double pars[], const double fiber[], const double Cmax[])
         : m_matrix(pars[0]), m_elastin(pars[1], 0.0, fiber[0], 0.5),
           m_muscle(pars[2], pars[3], fiber[0], fiber[1], Cmax),
           m_collagen(pars[4], pars[5], fiber[0], fiber[1], -fiber[1], M_kip, M_kop, Cmax) {
@@ -38,7 +38,7 @@ class ThoracicBase : public constitutive_models::MatLawTime<4> {
 
     void get_scaled_pars(double pars[]);
 
-    void stress(const kinematics::kinematics<4> &kin, const double dt, double stress[]);
+    void stress(const kinematics::kinematics<4> &kin, double dt, double stress[]);
 };
 
 class ThoracicVEBase : public ThoracicBase {
@@ -47,12 +47,15 @@ class ThoracicVEBase : public ThoracicBase {
     constitutive_models::FractionalVE<4> collagen;
 
   public:
-    ThoracicVEBase(double pars[], double fiber[], double visco[], double Tf)
+    ThoracicVEBase(const double pars[], const double fiber[], const double visco[], double Tf)
         : ThoracicBase(pars, fiber), muscle(m_muscle, visco[0], Tf),
           collagen(m_collagen, visco[1], Tf) {
     }
 
-    ThoracicVEBase(double pars[], double fiber[], double visco[], double Tf, double Cmax[])
+    ThoracicVEBase(
+        const double pars[], const double fiber[], const double visco[], double Tf,
+        const double Cmax[]
+    )
         : ThoracicBase(pars, fiber, Cmax), muscle(m_muscle, visco[0], Tf),
           collagen(m_collagen, visco[1], Tf) {
     }
@@ -60,12 +63,15 @@ class ThoracicVEBase : public ThoracicBase {
     ~ThoracicVEBase() {
     }
 
-    void stress(const kinematics::kinematics<4> &kin, const double dt, double stress[]);
+    void stress(const kinematics::kinematics<4> &kin, double dt, double stress[]);
 };
 
 class ThoracicVE : public ThoracicVEBase {
   public:
-    ThoracicVE(double pars[], double fiber[], double visco[], double Tf, double Cmax[])
+    ThoracicVE(
+        const double pars[], const double fiber[], const double visco[], double Tf,
+        const double Cmax[]
+    )
         : ThoracicVEBase(pars, fiber, visco, Tf) {
     }
     ~ThoracicVE() {
@@ -74,7 +80,10 @@ class ThoracicVE : public ThoracicVEBase {
 
 class ThoracicVEScaled : public ThoracicVEBase {
   public:
-    ThoracicVEScaled(double pars[], double fiber[], double visco[], double Tf, double Cmax[])
+    ThoracicVEScaled(
+        const double pars[], const double fiber[], const double visco[], double Tf,
+        const double Cmax[]
+    )
         : ThoracicVEBase(pars, fiber, visco, Tf, Cmax) {
     }
     ~ThoracicVEScaled() {

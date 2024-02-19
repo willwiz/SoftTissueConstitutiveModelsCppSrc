@@ -52,11 +52,10 @@ double calc_residual(
 
     simulate<matlaw, kine, dim>(pars, fiber, visco, Tf, Cmax, args, dt, &sims[0], n);
 
-    double res = residual_general<normfunc, dim>(
-        args, stress, weights, index, select, dim, nprot, skip, sims
-    );
+    double res =
+        residual_general<normfunc, dim>(args, stress, weights, index, select, nprot, skip, sims);
 
-    double hyst = hystfunc(sims, deltaCG, hysteresis, weights, index, select, dim, nprot, skip);
+    double hyst = hystfunc(sims, deltaCG, hysteresis, weights, index, select, nprot, skip);
 
     delete[] sims;
 
@@ -109,6 +108,7 @@ inline double quadratic_residual(double sim, double data, double strain) {
     return difference * difference;
 }
 
+template <int dim>
 double hysteresis_body_null(
     const double sims[], const double deltaCG[], const double hysteresis[], const double weights[],
     const int index[], const int select[], int nprot, int skip
@@ -120,7 +120,7 @@ double hysteresis_body_null(
 template <int dim>
 double hysteresis_body(
     const double sims[], const double deltaCG[], const double hysteresis[], const double weights[],
-    const int index[], int select[], int nprot, int skip
+    const int index[], const int select[], int nprot, int skip
 ) {
     int size = dim * dim;
     int strd_i, strd_k;
