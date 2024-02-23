@@ -1,8 +1,9 @@
 #define _USE_MATH_DEFINES
 
-#include <cmath>
-#include "../CTvalues_optimization.hpp"
 #include "planar_elastin_matrix_model.hpp"
+#include "../CTvalues_optimization.hpp"
+#include "../kinematics/kinematics.hpp"
+#include <cmath>
 
 /*----------------------------------------------------------------------
  |  This file provides the definitions of the different model forms
@@ -15,33 +16,29 @@
  |  Dependencies: None
  -----------------------------------------------------------------------*/
 
-
 using namespace constitutive_models;
 
 namespace sim {
-
 
 /*----------------------------------------------------------------------
  |  This provides the main models in the full constitutive model
  -----------------------------------------------------------------------*/
 
-    void PlanarElastinMatrix::get_scaled_pars(double pars[])
-    {
-        pars[0] = m_matrix.mu;
-        pars[1] = m_elastin.get_scaled_modulus();
-    }
-
-
-    void PlanarElastinMatrix::stress(const kinematics::kinematics<4> &kin, const double dt, double stress[])
-    {
-        double p = 0.0;
-        double mat[4], el[4];
-        p = m_matrix.stress(kin, mat);
-        (void) m_elastin.stress(kin, el);
-        for (int j = 0; j < ctv::prob_dim; j++)
-        {
-            stress[j] = mat[j] + el[j] - p * kin.I_n*kin.Cinv[j];
-        }
-    }
-
+void PlanarElastinMatrix::get_scaled_pars(double pars[]) {
+    pars[0] = m_matrix.mu;
+    pars[1] = m_elastin.get_scaled_modulus();
 }
+
+void PlanarElastinMatrix::stress(
+    const kinematics::kinematics<4> &kin, const double dt, double stress[]
+) {
+    double p = 0.0;
+    double mat[4], el[4];
+    p = m_matrix.stress(kin, mat);
+    (void)m_elastin.stress(kin, el);
+    for (int j = 0; j < ctv::prob_dim; j++) {
+        stress[j] = mat[j] + el[j] - p * kin.I_n * kin.Cinv[j];
+    }
+}
+
+} // namespace sim

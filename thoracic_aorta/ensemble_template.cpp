@@ -25,7 +25,7 @@ template <class matlaw, NormFunction nfunc, HysteresisFunction hfunc, PenaltyFun
 double calc_ensemble_objective(
     const double pars[], const double visco[], double Tf, const double Cmax[],
     const double strain[], const double stress[], const double dt[], const double deltaCG[],
-    double hysteresis, double data[], int n, int skip
+    double hysteresis, const double data[], int n, int skip
 ) {
     double *sims = new double[n]();
     ensemble_simulate<matlaw>(pars, visco, Tf, Cmax, strain, dt, &sims[0], n);

@@ -8,6 +8,7 @@
 #include "../constitutive/planar_hog.hpp"
 #include "../constitutive/struc_hog_2D.hpp"
 #include "../interfaces.hpp"
+#include "../kinematics/kinematics.hpp"
 #include "constants.hpp"
 #include <cmath>
 

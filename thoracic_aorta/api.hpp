@@ -34,7 +34,7 @@ void thoracic_ensemble_simulate(
 double thoracic_ensemble_residual(
     const double pars[], const double visco[], double Tf, const double Cmax[],
     const double strain[], const double stress[], const double dt[], const double deltaCG[],
-    double hysteresis, double data[], int n, int skip
+    double hysteresis, const double data[], int n, int skip
 );
 
 // Full Model

@@ -55,7 +55,7 @@ void HOGDouble2D::set_pars(double k1, double k2, double theta, double alpha) {
 void HOGDouble2D::set_pars(double k1, double k2, double theta, double alpha, const double Cmax[]) {
     this->set_pars(k1, k2, theta, alpha);
     E1 = ddot2D(m4, Cmax) - 1;
-    this->k1 = k1 / E1;
+    this->k1 = 2.0 * k1 / E1;
     this->E2 = E1 * E1;
 }
 

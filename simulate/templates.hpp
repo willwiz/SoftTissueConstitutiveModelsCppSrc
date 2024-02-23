@@ -33,7 +33,7 @@ double calc_residual(
 template <ResidualNorm norm_func, int dim>
 double residual_general(
     const double strain[], const double stress[], const double weights[], const int index[],
-    const int select[], const int nprot, const int skip, const double sims[]
+    const int select[], int nprot, int skip, const double sims[]
 );
 
 inline double quart_quad_residual(const double sim, const double data, const double strain);

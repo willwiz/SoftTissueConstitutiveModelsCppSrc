@@ -38,6 +38,7 @@ void deformation1D::precompute(const double args) {
 
 deformation2D::deformation2D() {
 }
+
 deformation2D::deformation2D(const double args[4]) : kinematics<4>() {
     this->precompute(args);
 }

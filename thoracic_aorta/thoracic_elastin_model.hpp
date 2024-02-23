@@ -3,6 +3,7 @@
 #include "../constitutive/neohookean.hpp"
 #include "../constitutive/planar_hog.hpp"
 #include "../interfaces.hpp"
+#include "../kinematics/kinematics.hpp"
 
 namespace thoracic {
 

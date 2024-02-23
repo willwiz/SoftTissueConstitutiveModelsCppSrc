@@ -3,6 +3,7 @@
 // #include <stdlib.h>
 // #include <algorithm>
 #include "api.hpp"
+#include "../kinematics/kinematics.hpp"
 #include "../simulate/templates.hpp"
 #include "constants.hpp"
 #include "ensemble_template.hpp"
@@ -24,8 +25,8 @@ namespace thoracic {
 inline double quart_quad_residual(double sim, double data, double strain) {
     double difference = sim - data;
     double r2 = difference * difference;
-    double mult = (difference > 0) ? r2 : 1.0;
-    return r2 * mult;
+    double mult = (difference > 0) ? r2 * r2 : 1.0;
+    return r2 * mult / strain;
 }
 
 inline double quadratic_residual(double sim, double data, double strain) {
@@ -39,16 +40,23 @@ double penalty_body_null(
     return 0.0;
 }
 
+double penalty_body_standard(
+    const double pars[], const double fiber[], const double visco[], const double data[]
+) {
+    double v_c = visco[1] - 0.5 * (data[1]);
+    double d_alpha = fiber[1] - M_ideal_alpha;
+    return M_p_fiber * fiber[0] * fiber[0] + M_p_alpha * d_alpha * d_alpha + M_w_visco * v_c * v_c;
+}
+
 double penalty_ensemble_null(const double pars[], const double visco[], const double data[]) {
     return 0.0;
 };
 
 double penalty_ensemble3(const double pars[], const double visco[], const double data[]) {
-    double b_s = pars[3];
+    // double b_s = pars[3];
     // double b_c = pars[5] - 2*pars[13];
-    double v_c = visco[0] - data[7];
-    double v_s = visco[1] - data[8];
-    return 1.0 + 0.1 * b_s * b_s + 10.0 * v_c * v_c + 10.0 * v_s * v_s;
+    double v_c = visco[0] + visco[1] - data[0] - data[1];
+    return M_w_visco * v_c * v_c;
 }
 
 double hysteresis_body_null(const double sims[], const double deltaCG[], int n, double hysteresis) {
@@ -174,7 +182,7 @@ double thoracic_ve_residual(
     const int select[], int n, int nprot, int skip
 ) {
     return simulate::calc_residual<
-        ThoracicVEScaled, kinematics::deformation2D, simulate::quart_quad_residual,
+        ThoracicVEScaled, kinematics::deformation2D, simulate::quadratic_residual,
         simulate::hysteresis_body<2>, penalty_body_null, 2>(
         pars, fiber, visco, Tf, Cmax, args, stress, dt, weights, deltaCG, hysteresis, data, index,
         select, n, nprot, skip, M_w_hyst

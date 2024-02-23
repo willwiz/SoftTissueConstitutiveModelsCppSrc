@@ -6,8 +6,8 @@ namespace simulate {
 
 template <class matlaw, class kine, int dim>
 void simulate(
-    double pars[], double fiber[], double caputo[], double Tf, double Cmax[], double args[],
-    double dt[], double stress[], int n
+    const double pars[], const double fiber[], const double caputo[], double Tf,
+    const double Cmax[], const double args[], const double dt[], double stress[], int n
 ) {
     int size = dim * dim;
     int strd_i;
@@ -72,8 +72,8 @@ double calc_residual(
 
 template <ResidualNorm norm_func, int dim>
 double residual_general(
-    double strain[], double stress[], double weights[], int index[], int select[], int nprot,
-    int skip, double sims[]
+    const double strain[], const double stress[], const double weights[], const int index[],
+    const int select[], int nprot, int skip, const double sims[]
 ) {
     int kid, strd_i, strd_k;
     // double ds;
@@ -99,7 +99,7 @@ double residual_general(
 inline double quart_quad_residual(double sim, double data, double strain) {
     double difference = sim - data;
     double r2 = difference * difference;
-    double mult = (difference > 0) ? r2 : 1.0;
+    double mult = (difference > 0) ? r2 * r2 : 1.0;
     return r2 * mult;
 }
 

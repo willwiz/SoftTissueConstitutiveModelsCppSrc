@@ -1,6 +1,5 @@
 #define _USE_MATH_DEFINES
 #include "thoracic_ensemble_model.hpp"
-#include "constants.hpp"
 #include <cmath>
 
 /*----------------------------------------------------------------------
@@ -20,12 +19,14 @@ namespace thoracic {
  |  This provides the main models in the full constitutive model
  -----------------------------------------------------------------------*/
 ThoracicEnsembleBase::ThoracicEnsembleBase(const double pars[])
-    : m_matrix(0), m_elastin(pars[1], 0.0, 0.0, 0.5), m_muscle(pars[2], pars[3], 0.0, 0.5),
+    : m_matrix(pars[0]), m_elastin(pars[1], 0.0, 0.0, 0.5),
+      m_muscle(pars[2], pars[3], 0.0, M_ideal_alpha),
       m_collagen(pars[4], pars[5], 0.0, M_ideal_alpha, -M_ideal_alpha, M_kip, M_kop) {
 }
 
 ThoracicEnsembleBase::ThoracicEnsembleBase(const double pars[], const double Cmax[])
-    : m_matrix(0), m_elastin(pars[1], 0.0, 0.0, 0.5), m_muscle(pars[2], pars[3], 0.0, 0.5, Cmax),
+    : m_matrix(pars[0]), m_elastin(pars[1], 0.0, 0.0, 0.5),
+      m_muscle(pars[2], pars[3], 0.0, M_ideal_alpha, Cmax),
       m_collagen(pars[4], pars[5], 0.0, M_ideal_alpha, -M_ideal_alpha, M_kip, M_kop, Cmax) {
 }
 
