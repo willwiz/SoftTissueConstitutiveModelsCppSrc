@@ -9,7 +9,7 @@ void simulate(
     const double pars[], const double fiber[], const double caputo[], double Tf,
     const double Cmax[], const double args[], const double dt[], double stress[], int n
 ) {
-    int size = dim * dim;
+    constexpr int size = dim * dim;
     int strd_i;
     double vals[size];
 
