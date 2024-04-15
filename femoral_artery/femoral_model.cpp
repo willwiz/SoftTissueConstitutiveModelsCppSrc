@@ -29,7 +29,7 @@ FemoralBase::FemoralBase(const double pars[], const double fiber[])
 }
 
 FemoralBase::FemoralBase(const double pars[], const double fiber[], const double Cmax[])
-    : m_matrix(pars[0]), m_elastin(pars[1], 0.0, fiber[0], Cmax),
+    : m_matrix(pars[0]), m_elastin(pars[1], 0.0, fiber[0]),
       m_muscle(pars[2], pars[3], fiber[0] + M_PI_2, Cmax),
       m_collagen(pars[4], pars[5], fiber[0], fiber[1], -fiber[1], M_kip, M_kop, Cmax) {
 }
@@ -39,7 +39,7 @@ FemoralBase::~FemoralBase() {
 
 void FemoralBase::get_scaled_pars(double pars[]) {
     pars[0] = m_matrix.mu;
-    pars[1] = m_elastin.get_scaled_modulus();
+    pars[1] = m_elastin.k1;
     pars[2] = m_muscle.get_scaled_modulus();
     pars[3] = m_muscle.k2;
     pars[4] = m_collagen.get_scaled_modulus();

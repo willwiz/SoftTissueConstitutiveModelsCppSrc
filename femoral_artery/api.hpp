@@ -3,8 +3,7 @@
 namespace femoral {
 
 void femoral_get_model_parameters_scaled(
-    const double pars[], const double fiber[], const double visco[], double Tf, const double Cmax[],
-    double pars_out[11]
+    const double pars[10], const double Cmax[], double pars_out[10]
 );
 
 void femoral_ve_simulate_scaled(

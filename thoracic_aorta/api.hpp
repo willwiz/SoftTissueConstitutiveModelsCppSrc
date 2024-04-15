@@ -39,10 +39,7 @@ double thoracic_ensemble_residual(
 
 // Full Model
 
-void thoracic_ve_get_parameters(
-    const double pars[], const double fiber[], const double visco[], double Tf, const double Cmax[],
-    double pars_out[10]
-);
+void thoracic_ve_get_parameters(const double pars[10], const double Cmax[], double pars_out[10]);
 
 void thoracic_ve_simulate(
     const double pars[], const double fiber[], const double caputo[], double Tf,

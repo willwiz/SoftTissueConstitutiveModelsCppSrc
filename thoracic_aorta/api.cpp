@@ -154,16 +154,13 @@ double thoracic_ensemble_residual(
  * scaled.
  *******************************************************************************/
 
-void thoracic_ve_get_parameters(
-    const double pars[], const double fiber[], const double visco[], double Tf, const double Cmax[],
-    double pars_out[10]
-) {
-    ThoracicVEScaled psi(pars, fiber, visco, Tf, Cmax);
+void thoracic_ve_get_parameters(const double pars[10], const double Cmax[], double pars_out[10]) {
+    ThoracicBase psi(pars, &pars[6]);
     psi.get_scaled_pars(&pars_out[0]);
-    pars_out[6] = fiber[0];
-    pars_out[7] = fiber[1];
-    pars_out[8] = visco[0];
-    pars_out[9] = visco[1];
+    pars_out[6] = pars[6];
+    pars_out[7] = pars[7];
+    pars_out[8] = pars[8];
+    pars_out[9] = pars[9];
 }
 
 void thoracic_ve_simulate(

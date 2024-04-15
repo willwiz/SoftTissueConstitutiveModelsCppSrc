@@ -38,15 +38,14 @@ double penalty_body_4(
  -----------------------------------------------------------------------*/
 
 void femoral_get_model_parameters_scaled(
-    const double pars[], const double fiber[], const double visco[], double Tf, const double Cmax[],
-    double pars_out[11]
+    const double pars[10], const double Cmax[], double pars_out[10]
 ) {
-    FemoralBase psi(pars, fiber, Cmax);
+    FemoralBase psi(pars, &pars[6], Cmax);
     psi.get_scaled_pars(&pars_out[0]);
-    pars_out[6] = fiber[0];
-    pars_out[7] = fiber[1];
-    pars_out[8] = visco[0];
-    pars_out[9] = visco[1];
+    pars_out[6] = pars[6];
+    pars_out[7] = pars[7];
+    pars_out[8] = pars[8];
+    pars_out[9] = pars[9];
 }
 
 void femoral_ve_simulate_scaled(
