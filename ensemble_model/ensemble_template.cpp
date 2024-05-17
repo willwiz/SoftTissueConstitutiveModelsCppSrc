@@ -40,7 +40,7 @@ double calc_ensemble_objective(
 
 inline double top_sided_residual(double sim, double data, double baseline) {
     double difference = sim - data - baseline;
-    double weight = (difference > 0) ? difference * difference : 1.0;
+    double weight = (difference > 0) ? std::abs(difference) : 1.0;
 
     return weight * difference * difference;
 }

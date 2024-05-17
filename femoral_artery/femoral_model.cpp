@@ -61,14 +61,14 @@ void FemoralBase::stress(const kinematics::kinematics<4> &kin, double dt, double
 FemoralVEBase::FemoralVEBase(
     const double pars[], const double fiber[], const double visco[], double Tf
 )
-    : FemoralBase(pars, fiber), collagen(m_collagen, visco[0], Tf), muscle(m_muscle, visco[1], Tf) {
+    : FemoralBase(pars, fiber), muscle(m_muscle, visco[0], Tf), collagen(m_collagen, visco[1], Tf) {
 }
 
 FemoralVEBase::FemoralVEBase(
     const double pars[], const double fiber[], const double visco[], double Tf, const double Cmax[]
 )
-    : FemoralBase(pars, fiber, Cmax), collagen(m_collagen, visco[0], Tf),
-      muscle(m_muscle, visco[1], Tf) {
+    : FemoralBase(pars, fiber, Cmax), muscle(m_muscle, visco[0], Tf),
+      collagen(m_collagen, visco[1], Tf) {
 }
 FemoralVEBase::~FemoralVEBase() {
 }

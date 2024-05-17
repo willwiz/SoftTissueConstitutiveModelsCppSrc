@@ -31,8 +31,8 @@ class FemoralBase : public constitutive_models::MatLawTime<4> {
 
 class FemoralVEBase : public FemoralBase {
   protected:
-    constitutive_models::FractionalVE<4> collagen;
     constitutive_models::FractionalVE<4> muscle;
+    constitutive_models::FractionalVE<4> collagen;
 
   public:
     FemoralVEBase(const double pars[], const double fiber[], const double visco[], double Tf);

@@ -141,8 +141,8 @@ double hysteresis_body(
                 hyst = hyst + sims[strd_i] * deltaCG[strd_i];
             }
             ds = hyst - hysteresis[strd_k + j];
-            // res = res + weights[strd_k + j] * ds*ds;
-            res = res + ds * ds;
+            res = res + weights[strd_k + j] * ds * ds;
+            // res = res + ds * ds;
         }
     }
 
