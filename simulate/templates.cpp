@@ -49,15 +49,18 @@ double calc_residual(
     const double w_hyst
 ) {
     double *sims = new double[n * dim * dim]();
+    // double *diff = new double[n * dim * dim]();
 
     simulate<matlaw, kine, dim>(pars, fiber, visco, Tf, Cmax, args, dt, &sims[0], n);
-
-    double res =
-        residual_general<normfunc, dim>(args, stress, weights, index, select, nprot, skip, sims);
+    // normalize_residuals<dim>(sims, stress, n, diff);
+    double res = residual_term_general<normfunc, dim>(
+        args, stress, weights, index, select, nprot, skip, sims
+    );
 
     double hyst = hystfunc(sims, deltaCG, hysteresis, weights, index, select, nprot, skip);
 
     delete[] sims;
+    // delete[] diff;
 
     return (res + w_hyst * hyst) * (1.0 + penfunc(pars, fiber, visco, data));
 }
@@ -70,8 +73,36 @@ double calc_residual(
  ****************************************************************************** */
 // Residual Calculation
 
+template <int dim>
+void normalize_residuals(
+    const double sim[], const double stress[], const int start, const int end, double res[]
+) {
+    constexpr int size = dim * dim;
+    int strd_i;
+    double n = (double)end - start;
+    // double mean[size] = {0.0};
+
+    for (int i = start; i < end; i++) {
+        for (int j = 0; j < size; j++) {
+            strd_i = size * i;
+            res[strd_i + j] = sim[strd_i + j] - stress[strd_i + j];
+            // mean[j] = mean[j] + res[strd_i + j];
+        }
+    }
+    // for (int j = 0; j < size; j++) {
+    //     mean[j] = mean[j] / n;
+    // }
+
+    // for (int i = 1; i < n; i++) {
+    //     for (int j = 0; j < size; j++) {
+    //         strd_i = size * i;
+    //         res[strd_i + j] = res[strd_i + j] - mean[j];
+    //     }
+    // }
+}
+
 template <ResidualNorm norm_func, int dim>
-double residual_general(
+double residual_term_general(
     const double strain[], const double stress[], const double weights[], const int index[],
     const int select[], int nprot, int skip, const double sims[]
 ) {
@@ -82,8 +113,8 @@ double residual_general(
 
     res = 0;
     for (int k = 0; k < nprot; k++) {
-        kid = select[k];
-        strd_k = size * kid;
+        kid = 2 * select[k];
+        strd_k = size * select[k];
         for (int j = 0; j < size; j += (dim + 1)) {
             eps = 0;
             for (int i = index[kid]; i < index[kid + 1] + 1; i += skip) {
@@ -122,21 +153,19 @@ double hysteresis_body(
     const double sims[], const double deltaCG[], const double hysteresis[], const double weights[],
     const int index[], const int select[], int nprot, int skip
 ) {
-    int size = dim * dim;
+    constexpr int size = dim * dim;
     int strd_i, strd_k;
     double ds, res, hyst;
-    int kid, start, stop;
+    int kid;
 
     res = 0;
     for (int k = 0; k < nprot; k++) {
-        kid = select[k];
-        strd_k = size * kid;
-        start = index[kid];
-        stop = index[kid + 1] + 1;
+        kid = 2 * select[k];
+        strd_k = size * select[k];
         for (int j = 0; j < size; j += (dim + 1)) {
             hyst = 0;
 
-            for (int i = start; i < stop; i += skip) {
+            for (int i = index[kid]; i < index[kid + 1]; i += skip) {
                 strd_i = i * size + j;
                 hyst = hyst + sims[strd_i] * deltaCG[strd_i];
             }

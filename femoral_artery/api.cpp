@@ -24,7 +24,7 @@ double penalty_body_4(
     const double pars[], const double fiber[], const double visco[], const double data[]
 ) {
     double d_alpha = fiber[1] - M_ideal_alpha;
-    double delta_alpha_L = visco[0] - data[0];
+    double delta_alpha_L = visco[1] - data[0];
     double delta_alpha_C = 0.5 * (visco[0] + visco[1]) - data[1];
     double frac_alpha_weight = delta_alpha_L * delta_alpha_L + delta_alpha_C * delta_alpha_C;
     return (

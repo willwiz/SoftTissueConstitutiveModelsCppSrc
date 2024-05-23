@@ -7,12 +7,11 @@ namespace constitutive_models {
 
 class StrucHOG2D : public MatLaw<4> {
   public:
-    double k1, k2;
-    double A, B, C;
+    double k, b;
     double H4[4], H6[4];
     double H_33;
-    double E1;
-    double E2;
+    double z;
+    double slope;
 
     StrucHOG2D();
     ~StrucHOG2D();

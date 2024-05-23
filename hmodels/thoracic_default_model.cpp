@@ -28,7 +28,7 @@ void ThoracicDefaultBase::get_scaled_pars(double pars[]) {
     pars[2] = m_muscle.get_scaled_modulus();
     pars[3] = m_muscle.k2;
     pars[4] = m_collagen.get_scaled_modulus();
-    pars[5] = m_collagen.k2;
+    pars[5] = m_collagen.b;
 }
 
 void ThoracicDefaultBase::stress(

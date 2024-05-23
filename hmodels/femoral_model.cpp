@@ -39,11 +39,11 @@ FemoralBase::~FemoralBase() {
 void FemoralBase::get_scaled_pars(double pars[]) {
     pars[0] = m_matrix.mu;
     pars[1] = m_collagen.get_scaled_modulus();
-    pars[2] = m_collagen.k2;
+    pars[2] = m_collagen.b;
     pars[3] = m_elastin.get_scaled_modulus();
-    pars[4] = m_elastin.k2;
+    pars[4] = m_elastin.b;
     pars[5] = m_muscle.get_scaled_modulus();
-    pars[6] = m_muscle.k2;
+    pars[6] = m_muscle.b;
 }
 
 void FemoralBase::stress(const kinematics::kinematics<4> &kin, const double dt, double stress[]) {
