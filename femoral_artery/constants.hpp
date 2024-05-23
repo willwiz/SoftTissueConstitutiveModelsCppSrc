@@ -5,7 +5,7 @@
 namespace femoral {
 
 extern const double M_p_fiber = 0.001;
-extern const double M_p_alpha = 1.0;
+extern const double M_p_alpha = 0.1;
 extern const double M_p_elastin = 1e-3;
 extern const double M_p_collagen = 1e-1;
 extern const double M_b_visco = 0.01;

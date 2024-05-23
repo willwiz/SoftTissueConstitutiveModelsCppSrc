@@ -7,10 +7,10 @@ namespace constitutive_models {
 
 class Hog2D : public MatLaw<4> {
   public:
-    double k1, k2;
+    double k, b;
     double m[4];
-    double E1;
-    double E2;
+    double z;
+    double slope;
 
     Hog2D();
     ~Hog2D();

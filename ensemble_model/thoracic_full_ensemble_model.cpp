@@ -25,7 +25,7 @@ namespace ensemble {
 void ThoracicFullEnsembleBase::get_scaled_pars(double pars[]) {
     pars[0] = m_matrix.mu;
     pars[1] = m_collagen.get_scaled_modulus();
-    pars[2] = m_collagen.k2;
+    pars[2] = m_collagen.b;
     pars[3] = m_elastin.get_scaled_modulus();
 }
 

@@ -31,7 +31,7 @@ double calc_residual(
 );
 
 template <ResidualNorm norm_func, int dim>
-double residual_general(
+double residual_term_general(
     const double strain[], const double stress[], const double weights[], const int index[],
     const int select[], int nprot, int skip, const double sims[]
 );
