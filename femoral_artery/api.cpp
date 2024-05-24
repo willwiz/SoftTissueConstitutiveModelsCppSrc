@@ -29,8 +29,13 @@ double penalty_body_4(
     double frac_alpha_weight = delta_alpha_L * delta_alpha_L + delta_alpha_C * delta_alpha_C;
     return (
         M_p_fiber * fiber[0] * fiber[0] + M_p_alpha * d_alpha * d_alpha +
-        M_p_elastin * pars[4] * pars[4] + M_w_visco * frac_alpha_weight
+        M_p_smc_b * pars[3] * pars[3] + M_p_collagen * pars[3] * pars[3] +
+        M_w_visco * frac_alpha_weight
     );
+    // return (
+    //     M_p_fiber * fiber[0] * fiber[0] + M_p_alpha * d_alpha * d_alpha +
+    //     M_w_visco * frac_alpha_weight
+    // );
 }
 
 /*----------------------------------------------------------------------

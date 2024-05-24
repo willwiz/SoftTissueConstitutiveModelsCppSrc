@@ -11,7 +11,8 @@ class StrucHOG2D : public MatLaw<4> {
     double H4[4], H6[4];
     double H_33;
     double z;
-    double slope;
+    double low_slope;
+    double high_slope;
 
     StrucHOG2D();
     ~StrucHOG2D();

@@ -49,18 +49,21 @@ double calc_residual(
     const double w_hyst
 ) {
     double *sims = new double[n * dim * dim]();
-    // double *diff = new double[n * dim * dim]();
+    double *diff = new double[n * dim * dim]();
 
     simulate<matlaw, kine, dim>(pars, fiber, visco, Tf, Cmax, args, dt, &sims[0], n);
-    // normalize_residuals<dim>(sims, stress, n, diff);
-    double res = residual_term_general<normfunc, dim>(
-        args, stress, weights, index, select, nprot, skip, sims
-    );
+    compute_residual_difference<dim>(sims, stress, n, diff);
+    for (int k = 0; k < nprot; k++) {
+        normalize_residuals<dim>(diff, index[2 * select[k]], index[2 * select[k] + 1]);
+    }
+
+    double res =
+        residual_term_general<normfunc, dim>(args, diff, weights, index, select, nprot, skip);
 
     double hyst = hystfunc(sims, deltaCG, hysteresis, weights, index, select, nprot, skip);
 
     delete[] sims;
-    // delete[] diff;
+    delete[] diff;
 
     return (res + w_hyst * hyst) * (1.0 + penfunc(pars, fiber, visco, data));
 }
@@ -72,39 +75,43 @@ double calc_residual(
  * This is the same for all of the models, so they share these same codes
  ****************************************************************************** */
 // Residual Calculation
-
 template <int dim>
-void normalize_residuals(
-    const double sim[], const double stress[], const int start, const int end, double res[]
+void compute_residual_difference(
+    const double sim[], const double stress[], const int n, double res[]
 ) {
+    constexpr int size = dim * dim;
+    for (int i = 0; i < size * n; i++) {
+        res[i] = sim[i] - stress[i];
+    }
+}
+
+template <int dim> void normalize_residuals(double res[], const int start, const int end) {
     constexpr int size = dim * dim;
     int strd_i;
     double n = (double)end - start;
-    // double mean[size] = {0.0};
+    double mean[size] = {0.0};
 
     for (int i = start; i < end; i++) {
         for (int j = 0; j < size; j++) {
             strd_i = size * i;
-            res[strd_i + j] = sim[strd_i + j] - stress[strd_i + j];
-            // mean[j] = mean[j] + res[strd_i + j];
+            mean[j] = mean[j] + res[strd_i + j];
         }
     }
-    // for (int j = 0; j < size; j++) {
-    //     mean[j] = mean[j] / n;
-    // }
-
-    // for (int i = 1; i < n; i++) {
-    //     for (int j = 0; j < size; j++) {
-    //         strd_i = size * i;
-    //         res[strd_i + j] = res[strd_i + j] - mean[j];
-    //     }
-    // }
+    for (int j = 0; j < size; j++) {
+        mean[j] = mean[j] / n;
+    }
+    for (int i = 1; i < n; i++) {
+        for (int j = 0; j < size; j++) {
+            strd_i = size * i;
+            res[strd_i + j] = res[strd_i + j] - mean[j];
+        }
+    }
 }
 
 template <ResidualNorm norm_func, int dim>
 double residual_term_general(
-    const double strain[], const double stress[], const double weights[], const int index[],
-    const int select[], int nprot, int skip, const double sims[]
+    const double strain[], const double residual[], const double weights[], const int index[],
+    const int select[], int nprot, int skip
 ) {
     int kid, strd_i, strd_k;
     // double ds;
@@ -119,7 +126,7 @@ double residual_term_general(
             eps = 0;
             for (int i = index[kid]; i < index[kid + 1] + 1; i += skip) {
                 strd_i = i * size + j;
-                eps = eps + norm_func(sims[strd_i], stress[strd_i], strain[strd_i]);
+                eps = eps + norm_func(residual[strd_i], strain[strd_i]);
             }
             res = res + weights[strd_k + j] * eps;
         }
@@ -127,16 +134,14 @@ double residual_term_general(
     return res;
 }
 
-inline double quart_quad_residual(double sim, double data, double strain) {
-    double difference = sim - data;
-    double r2 = difference * difference;
-    double mult = (difference > 0) ? r2 * r2 : 1.0;
+inline double quart_quad_residual(const double residual, const double strain) {
+    double r2 = residual * residual;
+    double mult = (residual > 0) ? r2 * r2 : 1.0;
     return r2 * mult;
 }
 
-inline double quadratic_residual(double sim, double data, double strain) {
-    double difference = sim - data;
-    return difference * difference;
+inline double quadratic_residual(const double residual, const double strain) {
+    return residual * residual;
 }
 
 template <int dim>

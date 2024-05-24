@@ -27,7 +27,6 @@ double ensemble_residual(
     double baseline
 );
 
-inline double quart_quad_residual(double sim, double data, double strain);
 double hysteresis_body(const double sims[], const double deltaCG[], int n, double hysteresis);
 double penalty_ensemble3(const double pars[], const double visco[], const double data[]);
 

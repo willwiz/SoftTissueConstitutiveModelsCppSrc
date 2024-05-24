@@ -4,7 +4,7 @@
 
 namespace simulate {
 
-typedef double (*ResidualNorm)(const double, const double, const double);
+typedef double (*ResidualNorm)(const double, const double);
 typedef double (*HysteresisFunc)(
     const double *, const double *, const double *, const double *, const int *, const int *, int,
     int
@@ -30,15 +30,22 @@ double calc_residual(
     const double w_hyst
 );
 
-template <ResidualNorm norm_func, int dim>
-double residual_term_general(
-    const double strain[], const double stress[], const double weights[], const int index[],
-    const int select[], int nprot, int skip, const double sims[]
+template <int dim>
+void compute_residual_difference(
+    const double sim[], const double stress[], const int n, double res[]
 );
 
-inline double quart_quad_residual(const double sim, const double data, const double strain);
+template <int dim> void normalize_residuals(double res[], const int start, const int end);
 
-inline double quadratic_residual(const double sim, const double data, const double strain);
+template <ResidualNorm norm_func, int dim>
+double residual_term_general(
+    const double strain[], const double residual[], const double weights[], const int index[],
+    const int select[], int nprot, int skip
+);
+
+inline double quart_quad_residual(const double residual, const double strain);
+
+inline double quadratic_residual(const double residual, const double strain);
 
 template <int dim>
 double hysteresis_body_null(

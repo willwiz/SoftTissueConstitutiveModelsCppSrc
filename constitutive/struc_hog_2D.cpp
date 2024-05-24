@@ -70,7 +70,8 @@ void StrucHOG2D::set_pars(
         this->H6[i] = this->H6[i] + B * m6[i];
     }
     this->H_33 = A + C;
-    this->slope = (1.0 + 2.0 * b) * k;
+    this->low_slope = k * exp(-b);
+    this->high_slope = (1.0 + 2.0 * b) * k;
 }
 
 // Scaled version
@@ -102,18 +103,18 @@ double StrucHOG2D::stress(const kinematics::kinematics<4> &kin, double stress[4]
     double I_6 = (ddot2D(H6, kin.C) + I_n - 1.0) * z;
     double dWd4, dWd6;
     if (I_4 < 0.0) {
-        dWd4 = 0.0;
+        dWd4 = low_slope * I_4;
     } else if (I_4 < 1.0) {
         dWd4 = k * I_4 * exp(b * (I_4 * I_4 - 1.0));
     } else {
-        dWd4 = slope * (I_4 - 1.0) + k;
+        dWd4 = high_slope * (I_4 - 1.0) + k;
     }
     if (I_6 < 0.0) {
-        dWd6 = 0.0;
+        dWd6 = low_slope * I_6;
     } else if (I_6 < 1.0) {
         dWd6 = k * I_6 * exp(b * (I_6 * I_6 - 1.0));
     } else {
-        dWd6 = slope * (I_6 - 1.0) + k;
+        dWd6 = high_slope * (I_6 - 1.0) + k;
     }
     for (int i = 0; i < 4; i++) {
         stress[i] = dWd4 * H4[i] + dWd6 * H6[i];

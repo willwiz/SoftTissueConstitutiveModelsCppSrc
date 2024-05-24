@@ -76,13 +76,6 @@ FemoralVEBase::~FemoralVEBase() {
 void FemoralVEBase::stress(const kinematics::kinematics<4> &kin, const double dt, double stress[]) {
     double p = 0.0;
     double iso[4], el[4], smc[4], col[4];
-    // p = m_matrix.stress(kin, iso);
-    // (void)m_elastin.stress(kin, el);
-    // p = p + muscle.stress(kin, dt, smc);
-    // p = p + collagen.stress(kin, dt, col);
-    // for (int j = 0; j < 4; j++) {
-    //     stress[j] = iso[j] + col[j] + smc[j] - p * kin.I_n * kin.Cinv[j];
-    // }
     p = m_matrix.stress(kin, iso);
     (void)m_elastin.stress(kin, el);
     p = p + muscle.stress(kin, dt, smc);

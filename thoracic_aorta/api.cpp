@@ -22,16 +22,16 @@ namespace thoracic {
  |  Author: Will Zhang
  |  Dependencies: None
  ----------------------------------------------------------------------------- */
-inline double quart_quad_residual(double sim, double data, double strain) {
-    double difference = sim - data;
-    double r2 = difference * difference;
-    double mult = (difference > 0) ? r2 * r2 : 1.0;
+inline double quart_quad_residual(const double sim, const double stress, const double strain) {
+    double residual = sim - stress;
+    double r2 = residual * residual;
+    double mult = (residual > 0) ? r2 * r2 : 1.0;
     return r2 * mult / strain;
 }
 
-inline double quadratic_residual(double sim, double data, double strain) {
-    double difference = sim - data;
-    return difference * difference;
+inline double quadratic_residual(const double sim, const double stress, const double strain) {
+    double residual = sim - stress;
+    return residual * residual;
 }
 
 double penalty_body_null(

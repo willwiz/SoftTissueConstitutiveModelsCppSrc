@@ -10,7 +10,8 @@ class Hog2D : public MatLaw<4> {
     double k, b;
     double m[4];
     double z;
-    double slope;
+    double high_slope;
+    double low_slope;
 
     Hog2D();
     ~Hog2D();

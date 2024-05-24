@@ -42,7 +42,8 @@ void Hog2D::set_pars(const double k1, const double k2, const double theta) {
     this->m[1] = c * s;
     this->m[2] = this->m[1];
     this->m[3] = s * s;
-    slope = (1.0 + 2.0 * k2) * k1;
+    low_slope = k1 * exp(-k2);
+    high_slope = (1.0 + 2.0 * k2) * k1;
 }
 
 // Scaled version
@@ -55,7 +56,8 @@ void Hog2D::set_pars(const double k1, const double k2, const double theta, const
     this->m[1] = c * s;
     this->m[2] = this->m[1];
     this->m[3] = s * s;
-    slope = (1.0 + 2.0 * k2) * k1;
+    low_slope = k1 * exp(-k2);
+    high_slope = (1.0 + 2.0 * k2) * k1;
     z = 1.0 / (ddot2D(m, Cmax) - 1.0);
 }
 
@@ -69,11 +71,11 @@ double Hog2D::stress(const kinematics::kinematics<4> &kin, double stress[4]) {
     double x = (ddot2D(m, kin.C) - 1.0) * z;
     // std::cout << "z = " << z << ", x = " << x << std::endl;
     if (x < 0.0) {
-        dWd4 = k * x;
+        dWd4 = low_slope * x;
     } else if (x < 1.0) {
         dWd4 = k * x * exp(b * (x * x - 1.0));
     } else {
-        dWd4 = slope * (x - 1.0) + k;
+        dWd4 = high_slope * (x - 1.0) + k;
     }
     for (int i = 0; i < 4; i++) {
         stress[i] = dWd4 * m[i];
