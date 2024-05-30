@@ -25,39 +25,39 @@ constexpr double std_strain[4] = {2.0, 0.0, 0.0, 2.0};
 Hog2D::Hog2D() : z{1.0} {};
 Hog2D::~Hog2D(){};
 
-Hog2D::Hog2D(const double k1, const double k2, const double theta) : z{1.0} {
-    this->set_pars(k1, k2, theta);
+Hog2D::Hog2D(const double k, const double b, const double theta) : z{1.0} {
+    this->set_pars(k, b, theta);
 };
 
-Hog2D::Hog2D(const double k1, const double k2, const double theta, const double Cmax[]) {
-    this->set_pars(k1, k2, theta, Cmax);
+Hog2D::Hog2D(const double k, const double b, const double theta, const double Cmax[]) {
+    this->set_pars(k, b, theta, Cmax);
 };
 
-void Hog2D::set_pars(const double k1, const double k2, const double theta) {
-    this->k = k1;
-    this->b = k2;
+void Hog2D::set_pars(const double k, const double b, const double theta) {
+    this->k = k;
+    this->b = b;
     double c = cos(theta);
     double s = sin(theta);
     this->m[0] = c * c;
     this->m[1] = c * s;
     this->m[2] = this->m[1];
     this->m[3] = s * s;
-    low_slope = k1 * exp(-k2);
-    high_slope = (1.0 + 2.0 * k2) * k1;
+    low_slope = k * exp(-b);
+    high_slope = (1.0 + 2.0 * b) * k;
 }
 
 // Scaled version
-void Hog2D::set_pars(const double k1, const double k2, const double theta, const double Cmax[]) {
-    this->k = k1;
-    this->b = k2;
+void Hog2D::set_pars(const double k, const double b, const double theta, const double Cmax[]) {
+    this->k = k;
+    this->b = b;
     double c = cos(theta);
     double s = sin(theta);
     this->m[0] = c * c;
     this->m[1] = c * s;
     this->m[2] = this->m[1];
     this->m[3] = s * s;
-    low_slope = k1 * exp(-k2);
-    high_slope = (1.0 + 2.0 * k2) * k1;
+    low_slope = k * exp(-b);
+    high_slope = (1.0 + 2.0 * b) * k;
     z = 1.0 / (ddot2D(m, Cmax) - 1.0);
 }
 

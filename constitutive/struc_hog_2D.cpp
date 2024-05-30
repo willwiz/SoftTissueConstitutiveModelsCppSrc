@@ -24,17 +24,17 @@ StrucHOG2D::StrucHOG2D() : z{1.0} {};
 StrucHOG2D::~StrucHOG2D(){};
 
 StrucHOG2D::StrucHOG2D(
-    double k1, double k2, double theta, double alpha, double beta, double kip, double kop
+    double k, double b, double theta, double alpha, double beta, double kip, double kop
 )
     : z{1.0} {
-    this->set_pars(k1, k2, theta, alpha, beta, kip, kop);
+    this->set_pars(k, b, theta, alpha, beta, kip, kop);
 };
 
 StrucHOG2D::StrucHOG2D(
-    double k1, double k2, double theta, double alpha, double beta, double kip, double kop,
+    double k, double b, double theta, double alpha, double beta, double kip, double kop,
     const double Cmax[]
 ) {
-    this->set_pars(k1, k2, theta, alpha, beta, kip, kop, Cmax);
+    this->set_pars(k, b, theta, alpha, beta, kip, kop, Cmax);
 };
 
 void StrucHOG2D::set_pars(
