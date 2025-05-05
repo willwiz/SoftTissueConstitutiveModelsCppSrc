@@ -2,13 +2,13 @@
 
 #define _USE_MATH_DEFINES
 
+#include "../../interfaces.hpp"
 #include "../CTvalues_optimization.hpp"
 #include "../constitutive/fractional.hpp"
 #include "../constitutive/hog_2D.hpp"
 #include "../constitutive/neohookean.hpp"
 #include "../constitutive/planar_hog.hpp"
 #include "../constitutive/struc_hog_2D.hpp"
-#include "../interfaces.hpp"
 #include <cmath>
 
 namespace sim {

@@ -1,10 +1,10 @@
 #pragma once
 #define _USE_MATH_DEFINES
+#include "../../interfaces.hpp"
 #include "../constitutive/fractional.hpp"
 #include "../constitutive/hog_double_2D.hpp"
 #include "../constitutive/neohookean.hpp"
 #include "../constitutive/planar_hog.hpp"
-#include "../interfaces.hpp"
 #include "constants.hpp"
 #include <cmath>
 

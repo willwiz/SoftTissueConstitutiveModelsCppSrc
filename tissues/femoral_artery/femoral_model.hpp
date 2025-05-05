@@ -3,26 +3,26 @@
 #define _USE_MATH_DEFINES
 
 #include "../../interfaces.hpp"
-#include "../CTvalues_optimization.hpp"
 #include "../constitutive/fractional.hpp"
 #include "../constitutive/hog_2D.hpp"
 #include "../constitutive/neohookean.hpp"
 #include "../constitutive/struc_hog_2D.hpp"
 #include "../kinematics/kinematics.hpp"
+#include "constants.hpp"
 #include <cmath>
 
-namespace sim {
+namespace femoral {
 
 class FemoralBase : public constitutive_models::MatLawTime<4> {
   protected:
     constitutive_models::NeoHookean m_matrix;
-    constitutive_models::StrucHOG2D m_collagen;
     constitutive_models::Hog2D m_elastin;
     constitutive_models::Hog2D m_muscle;
+    constitutive_models::StrucHOG2D m_collagen;
 
   public:
-    FemoralBase(double pars[], double fiber[]);
-    FemoralBase(double pars[], double fiber[], double Cmax[]);
+    FemoralBase(const double pars[], const double fiber[]);
+    FemoralBase(const double pars[], const double fiber[], const double Cmax[]);
     ~FemoralBase();
 
     void get_scaled_pars(double pars[]);
@@ -31,19 +31,25 @@ class FemoralBase : public constitutive_models::MatLawTime<4> {
 
 class FemoralVEBase : public FemoralBase {
   protected:
-    constitutive_models::FractionalVE<4> collagen;
     constitutive_models::FractionalVE<4> muscle;
+    constitutive_models::FractionalVE<4> collagen;
 
   public:
-    FemoralVEBase(double pars[], double fiber[], double visco[], double Tf);
-    FemoralVEBase(double pars[], double fiber[], double visco[], double Tf, double Cmax[]);
+    FemoralVEBase(const double pars[], const double fiber[], const double visco[], double Tf);
+    FemoralVEBase(
+        const double pars[], const double fiber[], const double visco[], double Tf,
+        const double Cmax[]
+    );
     ~FemoralVEBase();
     void stress(const kinematics::kinematics<4> &kin, const double dt, double stress[]);
 };
 
 class FemoralHE : public FemoralBase {
   public:
-    FemoralHE(double pars[], double fiber[], double visco[], double Tf, double Cmax[])
+    FemoralHE(
+        const double pars[], const double fiber[], const double visco[], double Tf,
+        const double Cmax[]
+    )
         : FemoralBase(pars, fiber) {
     }
     ~FemoralHE() {
@@ -52,7 +58,10 @@ class FemoralHE : public FemoralBase {
 
 class FemoralHEScaled : public FemoralBase {
   public:
-    FemoralHEScaled(double pars[], double fiber[], double visco[], double Tf, double Cmax[])
+    FemoralHEScaled(
+        const double pars[], const double fiber[], const double visco[], double Tf,
+        const double Cmax[]
+    )
         : FemoralBase(pars, fiber, Cmax) {
     }
     ~FemoralHEScaled() {
@@ -61,7 +70,10 @@ class FemoralHEScaled : public FemoralBase {
 
 class FemoralVE : public FemoralVEBase {
   public:
-    FemoralVE(double pars[], double fiber[], double visco[], double Tf, double Cmax[])
+    FemoralVE(
+        const double pars[], const double fiber[], const double visco[], double Tf,
+        const double Cmax[]
+    )
         : FemoralVEBase(pars, fiber, visco, Tf) {
     }
     ~FemoralVE() {
@@ -70,11 +82,14 @@ class FemoralVE : public FemoralVEBase {
 
 class FemoralVEScaled : public FemoralVEBase {
   public:
-    FemoralVEScaled(double pars[], double fiber[], double visco[], double Tf, double Cmax[])
+    FemoralVEScaled(
+        const double pars[], const double fiber[], const double visco[], double Tf,
+        const double Cmax[]
+    )
         : FemoralVEBase(pars, fiber, visco, Tf, Cmax) {
     }
     ~FemoralVEScaled() {
     }
 };
 
-} // namespace sim
+} // namespace femoral
