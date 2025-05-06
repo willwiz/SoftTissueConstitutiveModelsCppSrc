@@ -12,8 +12,8 @@ double penalty_function_null(double pars[], double fiber[], double visco[]);
 
 template <class matlaw>
 void simulate_general(
-    double pars[], double fiber[], double visco[], double Tf, double Cmax[], double strain[],
-    double dt[], double stress_out[], int n
+    double pars[], double fiber[], double visco[], double Tf, double drift[], double Cmax[],
+    double strain[], double dt[], double stress_out[], int n
 );
 
 template <ResidualNorm norm_func>
@@ -24,8 +24,9 @@ double residual_body_general(
 
 template <class matlaw, ResidualNorm norm_func, PenaltyFunction pen_func>
 double calc_objective_general(
-    double pars[], double fiber[], double visco[], double Tf, double Cmax[], double strain[],
-    double stress[], double dt[], double weight[], int n, int nset, int index[], int select[]
+    double pars[], double fiber[], double visco[], double Tf, double drift[], double Cmax[],
+    double strain[], double stress[], double dt[], double weight[], int n, int nset, int index[],
+    int select[]
 );
 
 } // namespace optimization_1d

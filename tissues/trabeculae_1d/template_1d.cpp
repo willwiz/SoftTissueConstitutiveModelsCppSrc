@@ -27,31 +27,20 @@ double penalty_function_null(double pars[], double fiber[], double visco[]) {
     return 1.0;
 };
 
-void add_drift(
-    const double pars[], const double strain[], double stress_inout[], const double dt[],
-    const int n
-) {
-    double drift = pars[3];
-    for (int i = 0; i < n; i++) {
-        drift = drift + dt[i] * pars[4];
-        stress_inout[i] = stress_inout[i] + drift * (1 / sqrt(strain[i]));
-    }
-}
-
 template <class matlaw>
 void simulate_general(
-    double pars[], double fiber[], double visco[], double Tf, double Cmax[], double strain[],
-    double dt[], double stress_out[], int n
+    double pars[], double fiber[], double visco[], double Tf, double drift[], double Cmax[],
+    double strain[], double dt[], double stress_out[], int n
 ) {
     double vals[1];
     kinematics::deformation1D kin;
     matlaw law(pars, fiber, visco, Tf, Cmax);
-    double drift = pars[3];
+    double d_drift = drift[0];
     for (int i = 1; i < n; i++) {
         kin.precompute(strain[i]);
-        drift = drift + dt[i] * pars[4];
+        d_drift = d_drift + dt[i] * drift[1];
         law.stress(kin, dt[i], vals);
-        stress_out[i] = vals[0] + drift * (1 / sqrt(strain[i]));
+        stress_out[i] = vals[0] + d_drift * (1 / sqrt(strain[i]));
     }
 }
 
@@ -74,14 +63,14 @@ double residual_body_general(
 
 template <class matlaw, ResidualNorm norm_func, PenaltyFunction pen_func>
 double calc_objective_general(
-    double pars[], double fiber[], double visco[], double Tf, double Cmax[], double strain[],
-    double stress[], double dt[], double weight[], int n, int nset, int index[], int select[]
+    double pars[], double fiber[], double visco[], double Tf, double drift[], double Cmax[],
+    double strain[], double stress[], double dt[], double weight[], int n, int nset, int index[],
+    int select[]
 ) {
     double *sims = new double[n]();
-    simulate_general<matlaw>(pars, fiber, visco, Tf, Cmax, strain, dt, &sims[0], n);
+    simulate_general<matlaw>(pars, fiber, visco, Tf, drift, Cmax, strain, dt, &sims[0], n);
     double res =
         residual_body_general<norm_func>(strain, stress, weight, nset, index, select, sims);
-    // (void)add_drift(pars, strain, sims, dt, n);
     delete[] sims;
     return res * (pen_func(pars, fiber, visco));
 }

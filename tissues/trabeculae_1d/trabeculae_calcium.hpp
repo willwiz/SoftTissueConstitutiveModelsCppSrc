@@ -17,10 +17,10 @@ class TrabeculaeCalcium : public constitutive_models::MatLawTime<1> {
   public:
     TrabeculaeCalcium(double pars[], double fiber[], double visco[], double Tf)
         : m_matrix(pars[0]), m_muscle(pars[1], pars[2], fiber[0]), muscle(m_muscle, visco[0], Tf),
-          calcium(m_muscle, visco[1]) {};
+          calcium(m_muscle, pars[3], visco[1]) {};
     TrabeculaeCalcium(double pars[], double fiber[], double visco[], double Tf, double Cmax[])
         : m_matrix(pars[0]), m_muscle(pars[1], pars[2], fiber[0], Cmax[0]),
-          muscle(m_muscle, visco[0], Tf), calcium(m_muscle, visco[1]) {};
+          muscle(m_muscle, visco[0], Tf), calcium(m_muscle, pars[3], visco[1]) {};
     ~TrabeculaeCalcium() {};
 
     void stress(const kinematics::kinematics<1> &kin, const double dt, double stress[]);
