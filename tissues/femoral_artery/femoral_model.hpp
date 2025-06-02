@@ -2,18 +2,18 @@
 
 #define _USE_MATH_DEFINES
 
+#include "../../constitutive/hyperelasticity/hog_2D.hpp"
+#include "../../constitutive/hyperelasticity/neohookean.hpp"
+#include "../../constitutive/hyperelasticity/struc_hog_2D.hpp"
+#include "../../constitutive/viscoelasticity/fractional.hpp"
 #include "../../interfaces.hpp"
-#include "../constitutive/fractional.hpp"
-#include "../constitutive/hog_2D.hpp"
-#include "../constitutive/neohookean.hpp"
-#include "../constitutive/struc_hog_2D.hpp"
 #include "../kinematics/kinematics.hpp"
 #include "constants.hpp"
 #include <cmath>
 
 namespace femoral {
 
-class FemoralBase : public constitutive_models::MatLawTime<4> {
+class FemoralBase : public constitutive_models::MatLawTime3D<4> {
   protected:
     constitutive_models::NeoHookean m_matrix;
     constitutive_models::Hog2D m_elastin;

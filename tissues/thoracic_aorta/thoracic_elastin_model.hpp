@@ -1,13 +1,13 @@
 #pragma once
 
+#include "../../constitutive/hyperelasticity/neohookean.hpp"
+#include "../../constitutive/hyperelasticity/planar_hog.hpp"
 #include "../../interfaces.hpp"
-#include "../constitutive/neohookean.hpp"
-#include "../constitutive/planar_hog.hpp"
 #include "../kinematics/kinematics.hpp"
 
 namespace thoracic {
 
-class PlanarElastinMatrix : public constitutive_models::MatLawTime<4> {
+class PlanarElastinMatrix : public constitutive_models::MatLawTime3D<4> {
   protected:
     constitutive_models::NeoHookean m_matrix;
     constitutive_models::PlanarHog2D m_elastin;

@@ -161,7 +161,7 @@ caputo_init_vec<dim>::caputo_init_vec(double alpha, double Tf, double delta)
     : caputo_init(alpha, Tf, delta), Q{}, f_prev{} {};
 
 template <int dim>
-void caputo_init_vec<dim>::caputo_iter(const double fn[], double dt, double v[]) {
+void caputo_init_vec<dim>::caputo_iter(const double fn[], const double dt, double v[]) {
 
     int krow;
 
@@ -186,7 +186,7 @@ void caputo_init_vec<dim>::caputo_iter(const double fn[], double dt, double v[])
 
 // The fractional differential equation
 template <int dim>
-void caputo_init_vec<dim>::diffeq_iter(const double fn[], double dt, double v[]) {
+void caputo_init_vec<dim>::diffeq_iter(const double fn[], const double dt, double v[]) {
 
     int krow;
 

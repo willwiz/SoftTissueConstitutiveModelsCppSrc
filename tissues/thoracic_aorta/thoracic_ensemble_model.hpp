@@ -1,17 +1,17 @@
 #pragma once
+#include "../../constitutive/hyperelasticity/hog_double_2D.hpp"
+#include "../../constitutive/hyperelasticity/neohookean.hpp"
+#include "../../constitutive/hyperelasticity/planar_hog.hpp"
+#include "../../constitutive/hyperelasticity/struc_hog_2D.hpp"
+#include "../../constitutive/viscoelasticity/fractional.hpp"
 #include "../../interfaces.hpp"
-#include "../constitutive/fractional.hpp"
-#include "../constitutive/hog_double_2D.hpp"
-#include "../constitutive/neohookean.hpp"
-#include "../constitutive/planar_hog.hpp"
-#include "../constitutive/struc_hog_2D.hpp"
 #include "../kinematics/kinematics.hpp"
 #include "constants.hpp"
 #include <cmath>
 
 namespace thoracic {
 
-class ThoracicEnsembleBase : public constitutive_models::MatLawTime<4> {
+class ThoracicEnsembleBase : public constitutive_models::MatLawTime3D<4> {
   protected:
     constitutive_models::NeoHookean m_matrix;
     constitutive_models::PlanarHog2D m_elastin;

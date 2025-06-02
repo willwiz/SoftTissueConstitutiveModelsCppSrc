@@ -6,7 +6,7 @@
 #include "../../interfaces.hpp"
 
 namespace optimization_1d {
-class TrabeculaePassive : public constitutive_models::MatLawTime<1> {
+class TrabeculaePassive : public constitutive_models::MatLawTime3D<1> {
   protected:
     constitutive_models::NeoHookean1D m_matrix;
     constitutive_models::TransverseIso1D m_muscle;

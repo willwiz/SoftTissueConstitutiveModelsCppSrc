@@ -45,8 +45,8 @@ template <int dim> class caputo_init_vec : public caputo_init {
 
     ~caputo_init_vec();
 
-    void caputo_iter(const double fn[], double dt, double v[]);
-    void diffeq_iter(const double fn[], double dt, double v[]);
+    void caputo_iter(const double fn[], const double dt, double v[]);
+    void diffeq_iter(const double fn[], const double dt, double v[]);
 };
 
 typedef caputo_init_vec<4> caputo_init_4;
