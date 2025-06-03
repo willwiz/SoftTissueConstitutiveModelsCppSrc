@@ -1,5 +1,5 @@
 #include "isotropic_fung.hpp"
-#include "../kinematics/tensor_algebra.hpp"
+#include "../../kinematics/tensor_algebra.hpp"
 #include <cmath>
 
 namespace constitutive_models {

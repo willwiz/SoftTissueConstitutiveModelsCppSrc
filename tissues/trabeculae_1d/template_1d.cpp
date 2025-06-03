@@ -36,7 +36,7 @@ void simulate_general(
     matlaw law(pars, fiber, visco, Tf, Cmax);
     for (int i = 1; i < n; i++) {
         kin.precompute(strain[i]);
-        law.stress(kin, dt[i], stress_out[i]);
+        law.stress(kin, dt[i], &stress_out[i]);
     }
 }
 

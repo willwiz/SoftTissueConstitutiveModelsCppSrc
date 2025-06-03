@@ -59,8 +59,8 @@ double objective_function_trabeculae_active(
     double strain[], double stress[], double dt[], double weight[], int n, int nset, int index[],
     int select[]
 ) {
-    return calc_objective_drift<TrabeculaeCalciumOnly, quadratic_residual, penalty_function_null>(
-        pars, fiber, visco, Tf, drift, Cmax, strain, stress, dt, weight, n, nset, index, select
+    return calc_objective_lgres<TrabeculaeCalciumOnly, penalty_function_null>(
+        pars, fiber, visco, Tf, Cmax, strain, stress, dt, weight, n, nset, index, select
     );
 }
 
@@ -69,8 +69,8 @@ double objective_function_trabeculae_passive(
     double strain[], double stress[], double dt[], double weight[], int n, int nset, int index[],
     int select[]
 ) {
-    return calc_objective_drift<TrabeculaePassive, quadratic_residual, penalty_function_null>(
-        pars, fiber, visco, Tf, drift, Cmax, strain, stress, dt, weight, n, nset, index, select
+    return calc_objective_lgres<TrabeculaePassive, penalty_function_null>(
+        pars, fiber, visco, Tf, Cmax, strain, stress, dt, weight, n, nset, index, select
     );
 }
 
@@ -79,8 +79,8 @@ double objective_function_trabeculae_calcium_diffeq(
     double strain[], double stress[], double dt[], double weight[], int n, int nset, int index[],
     int select[]
 ) {
-    return calc_objective_drift<TrabeculaeCalcium, quadratic_residual, penalty_function_null>(
-        pars, fiber, visco, Tf, drift, Cmax, strain, stress, dt, weight, n, nset, index, select
+    return calc_objective_lgres<TrabeculaeCalcium, penalty_function_null>(
+        pars, fiber, visco, Tf, Cmax, strain, stress, dt, weight, n, nset, index, select
     );
 }
 
@@ -89,8 +89,8 @@ double objective_function_trabeculae_passive_diffeq(
     double strain[], double stress[], double dt[], double weight[], int n, int nset, int index[],
     int select[]
 ) {
-    return calc_objective_drift<TrabeculaePassiveDiffEq, quadratic_residual, penalty_function_null>(
-        pars, fiber, visco, Tf, drift, Cmax, strain, stress, dt, weight, n, nset, index, select
+    return calc_objective_lgres<TrabeculaePassiveDiffEq, penalty_function_null>(
+        pars, fiber, visco, Tf, Cmax, strain, stress, dt, weight, n, nset, index, select
     );
 }
 
@@ -99,8 +99,8 @@ double objective_function_trabeculae_calcium(
     double strain[], double stress[], double dt[], double weight[], int n, int nset, int index[],
     int select[]
 ) {
-    return calc_objective_drift<TrabeculaeCalciumDiffEq, quadratic_residual, penalty_function_null>(
-        pars, fiber, visco, Tf, drift, Cmax, strain, stress, dt, weight, n, nset, index, select
+    return calc_objective_lgres<TrabeculaeCalciumDiffEq, penalty_function_null>(
+        pars, fiber, visco, Tf, Cmax, strain, stress, dt, weight, n, nset, index, select
     );
 }
 
