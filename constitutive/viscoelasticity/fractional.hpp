@@ -2,7 +2,7 @@
 
 #include "../../interfaces.hpp"
 #include "../../kinematics/kinematics.hpp"
-#include "./caputo.hpp"
+#include "caputo.hpp"
 
 namespace constitutive_models {
 template <int dim> class FractionalVE : public MatLawTime<dim> {

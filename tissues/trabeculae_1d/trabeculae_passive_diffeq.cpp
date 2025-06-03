@@ -1,5 +1,5 @@
 #define _USE_MATH_DEFINES
-#include "./trabeculae_passive_diffeq.hpp"
+#include "trabeculae_passive_diffeq.hpp"
 #include <cmath>
 
 namespace optimization_1d {

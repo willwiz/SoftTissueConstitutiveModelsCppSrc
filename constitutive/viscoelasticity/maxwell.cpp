@@ -1,4 +1,4 @@
-#include "./maxwell.hpp"
+#include "maxwell.hpp"
 #include <cmath>
 
 namespace constitutive_models {

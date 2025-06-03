@@ -1,5 +1,5 @@
 #define _USE_MATH_DEFINES
-#include "./trabeculae_calcium_only.hpp"
+#include "trabeculae_calcium_only.hpp"
 #include <cmath>
 
 namespace optimization_1d {

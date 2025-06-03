@@ -11,7 +11,7 @@ typedef double (*PenaltyFunction)(double *, double *, double *);
 double penalty_function_null(double pars[], double fiber[], double visco[]);
 
 template <class matlaw>
-void simulate_general(
+void simulate_drift(
     double pars[], double fiber[], double visco[], double Tf, double drift[], double Cmax[],
     double strain[], double dt[], double stress_out[], int n
 );
@@ -23,10 +23,16 @@ double residual_body_general(
 );
 
 template <class matlaw, ResidualNorm norm_func, PenaltyFunction pen_func>
-double calc_objective_general(
+double calc_objective_drift(
     double pars[], double fiber[], double visco[], double Tf, double drift[], double Cmax[],
     double strain[], double stress[], double dt[], double weight[], int n, int nset, int index[],
     int select[]
+);
+
+template <class matlaw, PenaltyFunction pen_func>
+double calc_objective_lgres(
+    double pars[], double fiber[], double visco[], double Tf, double Cmax[], double strain[],
+    double stress[], double dt[], double weight[], int n, int nset, int index[], int select[]
 );
 
 } // namespace optimization_1d
