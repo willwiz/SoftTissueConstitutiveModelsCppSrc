@@ -79,34 +79,52 @@ double residual_body_drift(
     int select[], double sims[]
 ) {
     // Get the maximum length of the time vector
-    int n = index[select[nset] + 1] + 1;
+    int n = index[select[nset - 1] + 1];
+    // std::cout << "n = " << n << std::endl;
     // Compute the time vectors for the residual projection matrix
-    double *t_ptr = new double[n]();
-    double sum_t = 0.0, sum_t2 = 0.0;
+    double *t_ptr = new double[n + 1]();
+    double sum_t = 0.0, sum_t2 = 0.0, sum_ones = 0.0;
     for (int k = 0; k < n; k++) {
-        t_ptr[k + 1] = t_ptr[k] + dt[k];
+        t_ptr[k + 1] = t_ptr[k] + dt[k] / (dt[2] * n);
     }
     for (int k = 0; k < nset; k++) {
         for (int m = index[select[k]]; m <= index[select[k] + 1]; m++) {
+            sum_ones = sum_ones + 1.0;
             sum_t = sum_t + t_ptr[m + 1];
             sum_t2 = sum_t2 + t_ptr[m + 1] * t_ptr[m + 1];
         }
     }
+    double w_projection = 1.0 / (sum_t2 * sum_ones - sum_t * sum_t);
+    sum_t2 = sum_t2 * w_projection;
+    sum_t = sum_t * w_projection;
+    sum_ones = sum_ones * w_projection;
+    // std::cout << "sum_t = " << sum_t << ", sum_t2 = " << sum_t2 << std::endl;
+    // std::cout << "det_projection = " << sum_t2 * sum_ones - sum_t * sum_t << std::endl;
+    // std::cout << "w_projection = " << w_projection << std::endl;
+    // std::cout << "matrix is:" << sum_t2 * w_projection << " " << -sum_t * w_projection << " "
+    //           << -sum_t * w_projection << " " << sum_ones * w_projection << std::endl;
+    // std::cout << "matrix is:" << sum_t2 << " " << -sum_t << " " << -sum_t << " " << sum_ones
+    //           << std::endl;
     // Compute the epsilon for sim data difference
-    double *eps_ptr = new double[n]();
-    for (int k = 0; k < n; k++) {
-        eps_ptr[k] = sims[k] - stress[k];
+    double *eps_ptr = new double[n + 1]();
+    for (int k = 0; k < nset; k++) {
+        for (int i = index[select[k]]; i <= index[select[k] + 1]; i++) {
+            eps_ptr[i] = sims[i] - stress[i];
+        }
     }
     // Compute the projected residuals
-    double *res_ptr = new double[n]();
-    double w_projection = 1.0 / (sum_t2 - sum_t * sum_t);
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            res_ptr[i] += (static_cast<double>(i == j) + (t_ptr[i] + t_ptr[j]) * sum_t -
-                           t_ptr[i] * t_ptr[j] - sum_t2) *
-                          eps_ptr[j];
+    double *res_ptr = new double[n + 1]();
+    for (int k = 0; k < nset; k++) {
+        for (int i = index[select[k]]; i <= index[select[k] + 1]; i++) {
+            for (int m = 0; m < nset; m++) {
+                for (int j = index[select[m]]; j <= index[select[m] + 1]; j++) {
+                    res_ptr[i] +=
+                        (static_cast<double>(i == j) - (sum_ones * t_ptr[i] * t_ptr[j] + sum_t2 -
+                                                        (t_ptr[i] + t_ptr[j]) * sum_t)) *
+                        eps_ptr[j];
+                }
+            }
         }
-        res_ptr[i] *= w_projection;
     }
     // Compute norms
     double Linf_norm = 0.0;
