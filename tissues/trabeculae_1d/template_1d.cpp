@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "../../CTvalues_optimization.hpp"
+// #include "../../residual/frechet/onesided.hpp"
 
 namespace optimization_1d {
 
@@ -74,75 +75,109 @@ double residual_body_general(
     return res;
 }
 
-double residual_body_drift(
+double residual_body_zeroed(
     double strain[], double stress[], double dt[], double weight[], int nset, int index[],
     int select[], double sims[]
 ) {
+    double l2norm = 0.0;
+    double linfnorm = 0.0;
+    double eps;
+    double res_protocol;
+    double zeroed_stress = stress[index[select[0]]];
+    for (int k = 0; k < nset; k++) {
+        res_protocol = 0.0;
+        for (int i = index[select[k]]; i <= index[select[k] + 1]; i++) {
+            eps = (sims[i] - stress[i] + zeroed_stress);
+            linfnorm = std::max(linfnorm, std::abs(eps));
+            res_protocol = res_protocol + eps * eps;
+        }
+        l2norm = l2norm + weight[k] * res_protocol;
+    }
+    return l2norm + 0.01 * linfnorm;
+}
+
+double residual_body_drift(
+    const double strain[], const double stress[], const double dt[], const double weight[],
+    int nset, const int index[], const int select[], const double sims[]
+) {
     // Get the maximum length of the time vector
     int n = index[select[nset - 1] + 1];
-    // std::cout << "n = " << n << std::endl;
-    // Compute the time vectors for the residual projection matrix
-    double *t_ptr = new double[n + 1]();
-    double sum_t = 0.0, sum_t2 = 0.0, sum_ones = 0.0;
-    for (int k = 0; k < n; k++) {
-        t_ptr[k + 1] = t_ptr[k] + dt[k] / (dt[2] * n);
-    }
-    for (int k = 0; k < nset; k++) {
-        for (int m = index[select[k]]; m <= index[select[k] + 1]; m++) {
-            sum_ones = sum_ones + 1.0;
-            sum_t = sum_t + t_ptr[m + 1];
-            sum_t2 = sum_t2 + t_ptr[m + 1] * t_ptr[m + 1];
-        }
-    }
-    double w_projection = 1.0 / (sum_t2 * sum_ones - sum_t * sum_t);
-    sum_t2 = sum_t2 * w_projection;
-    sum_t = sum_t * w_projection;
-    sum_ones = sum_ones * w_projection;
-    // std::cout << "sum_t = " << sum_t << ", sum_t2 = " << sum_t2 << std::endl;
-    // std::cout << "det_projection = " << sum_t2 * sum_ones - sum_t * sum_t << std::endl;
-    // std::cout << "w_projection = " << w_projection << std::endl;
-    // std::cout << "matrix is:" << sum_t2 * w_projection << " " << -sum_t * w_projection << " "
-    //           << -sum_t * w_projection << " " << sum_ones * w_projection << std::endl;
-    // std::cout << "matrix is:" << sum_t2 << " " << -sum_t << " " << -sum_t << " " << sum_ones
-    //           << std::endl;
-    // Compute the epsilon for sim data difference
+    // Compute the residual for sim data difference
+    double *fix_data = new double[n + 1]();
+    // for (int k = 0; k < nset; k++) {
+    //     res::regress_linear(
+    //         &stress[0], &sims[0], &dt[0], index[select[k]], index[select[k] + 1], &fix_data[0]
+    //     );
+    // }
     double *eps_ptr = new double[n + 1]();
-    for (int k = 0; k < nset; k++) {
-        for (int i = index[select[k]]; i <= index[select[k] + 1]; i++) {
-            eps_ptr[i] = sims[i] - stress[i];
-        }
-    }
-    // Compute the projected residuals
-    double *res_ptr = new double[n + 1]();
-    for (int k = 0; k < nset; k++) {
-        for (int i = index[select[k]]; i <= index[select[k] + 1]; i++) {
-            for (int m = 0; m < nset; m++) {
-                for (int j = index[select[m]]; j <= index[select[m] + 1]; j++) {
-                    res_ptr[i] +=
-                        (static_cast<double>(i == j) - (sum_ones * t_ptr[i] * t_ptr[j] + sum_t2 -
-                                                        (t_ptr[i] + t_ptr[j]) * sum_t)) *
-                        eps_ptr[j];
-                }
-            }
-        }
-    }
+    // for (int k = 0; k < nset; k++) {
+    //     res::window_residual_onesided(
+    //         &fix_data[0], &sims[0], index[select[k]], index[select[k] + 1], &eps_ptr[0]
+    //     );
+    // }
     // Compute norms
     double Linf_norm = 0.0;
     double L2_norm = 0.0;
     double L2_norm_p;
     for (int k = 0; k < nset; k++) {
         L2_norm_p = 0.0;
-        for (int m = index[select[k]]; m <= index[select[k] + 1]; m++) {
-            L2_norm_p += eps_ptr[m] * res_ptr[m];
-            Linf_norm = std::max(Linf_norm, std::abs(eps_ptr[m]));
+        for (int i = index[select[k]]; i <= index[select[k] + 1]; i++) {
+            Linf_norm = std::max(Linf_norm, std::abs(eps_ptr[i]));
+            L2_norm_p += eps_ptr[i] * eps_ptr[i];
         }
         L2_norm += weight[k] * L2_norm_p;
     }
     // Clean up
-    delete[] t_ptr;
+    delete[] fix_data;
     delete[] eps_ptr;
-    delete[] res_ptr;
-    return L2_norm + Linf_norm;
+    // // Compute the normalized time vectors for the residual projection matrix and store it in the
+    // // post residual
+    // double *t_ptr = new double[n + 1]();
+    // double sum_t = 0.0, sum_t2 = 0.0, sum_ones = 0.0;
+    // for (int k = 0; k < n; k++) {
+    //     t_ptr[k + 1] = t_ptr[k] + dt[k] / (dt[2] * n);
+    // }
+    // // Compute the projection inner matrix
+    // for (int k = 0; k < nset; k++) {
+    //     for (int i = index[select[k]]; i <= index[select[k] + 1]; i++) {
+    //         sum_ones = sum_ones + 1.0;
+    //         sum_t = sum_t + t_ptr[i + 1];
+    //         sum_t2 = sum_t2 + t_ptr[i + 1] * t_ptr[i + 1];
+    //     }
+    // }
+    // double w_projection = 1.0 / (sum_t2 * sum_ones - sum_t * sum_t);
+    // sum_t2 = sum_t2 * w_projection;
+    // sum_t = sum_t * w_projection;
+    // sum_ones = sum_ones * w_projection;
+    // // Compute the projected regression in 2 steps
+    // double sum_ty = 0.0;
+    // double sum_y = 0.0;
+    // for (int k = 0; k < nset; k++) {
+    //     for (int i = index[select[k]]; i <= index[select[k] + 1]; i++) {
+    //         sum_y = sum_y + eps_ptr[i];
+    //         sum_ty = sum_ty + t_ptr[i + 1] * eps_ptr[i];
+    //     }
+    // }
+    // double slope = (sum_ones * sum_ty - sum_t * sum_y);
+    // double intercept = (sum_t2 * sum_y - sum_t * sum_ty);
+    // // Compute norms
+    // double Linf_norm = 0.0;
+    // double L2_norm = 0.0;
+    // double L2_norm_p;
+    // double res;
+    // for (int k = 0; k < nset; k++) {
+    //     L2_norm_p = 0.0;
+    //     for (int i = index[select[k]]; i <= index[select[k] + 1]; i++) {
+    //         res = eps_ptr[i] - (slope * t_ptr[i] + intercept);
+    //         Linf_norm = std::max(Linf_norm, std::abs(res));
+    //         L2_norm_p += res * res;
+    //     }
+    //     L2_norm += weight[k] * L2_norm_p;
+    // }
+    // // Clean up
+    // delete[] eps_ptr;
+    // delete[] t_ptr;
+    return L2_norm;
 }
 
 template <class matlaw, ResidualNorm norm_func, PenaltyFunction pen_func>
@@ -166,7 +201,19 @@ double calc_objective_lgres(
 ) {
     double *sims = new double[n]();
     simulate_general<matlaw>(pars, fiber, visco, Tf, Cmax, strain, dt, &sims[0], n);
-    double res = residual_body_drift(strain, stress, dt, weight, nset, index, select, sims);
+    double res = residual_body_zeroed(strain, stress, dt, weight, nset, index, select, sims);
+    delete[] sims;
+    return res * (pen_func(pars, fiber, visco));
+}
+
+template <class matlaw, PenaltyFunction pen_func>
+double calc_objective_zeroed(
+    double pars[], double fiber[], double visco[], double Tf, double Cmax[], double strain[],
+    double stress[], double dt[], double weight[], int n, int nset, int index[], int select[]
+) {
+    double *sims = new double[n]();
+    simulate_general<matlaw>(pars, fiber, visco, Tf, Cmax, strain, dt, &sims[0], n);
+    double res = residual_body_zeroed(strain, stress, dt, weight, nset, index, select, sims);
     delete[] sims;
     return res * (pen_func(pars, fiber, visco));
 }

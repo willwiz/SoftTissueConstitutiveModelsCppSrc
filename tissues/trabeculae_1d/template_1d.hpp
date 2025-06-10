@@ -35,4 +35,10 @@ double calc_objective_lgres(
     double stress[], double dt[], double weight[], int n, int nset, int index[], int select[]
 );
 
+template <class matlaw, PenaltyFunction pen_func>
+double calc_objective_zeroed(
+    double pars[], double fiber[], double visco[], double Tf, double Cmax[], double strain[],
+    double stress[], double dt[], double weight[], int n, int nset, int index[], int select[]
+);
+
 } // namespace optimization_1d
