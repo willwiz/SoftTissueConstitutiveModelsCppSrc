@@ -13,7 +13,7 @@ double MaxwellVE<dim>::stress(
     // get the hyperelastic stress
     p = m_law->stress(kin, fvals);
     // compute the viscoelastic stress
-    decay = 1.0 / (1.0 + tau * dt);
+    decay = 1.0 / (1.0 + dt * neta / tau);
     for (int i = 0; i < dim; i++) {
         stress[i] = decay * (store_visco[i] + neta * (fvals[i] - store_hyper[i]));
     }

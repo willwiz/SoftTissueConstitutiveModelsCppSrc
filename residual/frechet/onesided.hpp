@@ -1,4 +1,4 @@
-
+#pragma once
 namespace res {
 void regress_linear(
     const double a_data[], const double b_data[], const double dt[], int start, int end,

@@ -50,14 +50,14 @@ void frechet_residual_onesided(
 void window_residual_onesided(
     const double a_data[], const double b_data[], const int start, const int end, double res[]
 ) {
-    double res_i;
+    // double res_i;
     for (int i = start; i <= end; i++) {
-        res_i = a_data[i] - b_data[i];
-        for (int j = i - 5; j <= i + 5; j++) {
-            if (std::abs(a_data[i] - b_data[j]) < std::abs(res_i)) {
-                res_i = a_data[i] - b_data[j];
-            }
-        }
+        // res_i[i] = a_data[i] - b_data[i];
+        // if (std::abs(a_data[i] - b_data[i + 1]) < std::abs(res_i)) {
+        //     res_i = a_data[i] - b_data[i + 1];
+        // }
+        // res[i] = res_i;
         res[i] = a_data[i] - b_data[i];
     }
+}
 } // namespace res

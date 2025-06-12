@@ -3,15 +3,15 @@
 namespace caputo {
 class caputo_init {
   protected:
-    double bek[9];
-    double e2[9];
+    double bek[15];
+    double e2[15];
     double dt, C0, K0, K1;
-    int N = 9;
+    int N = 15;
 
   public:
     double alpha, Tf, delta;
-    double betas[9];
-    double taus[9];
+    double betas[15];
+    double taus[15];
     double beta0;
     caputo_init();
     caputo_init(double alpha, double Tf, double delta);
@@ -23,7 +23,7 @@ class caputo_init {
 
 class caputo_init_scl : public caputo_init {
   public:
-    double Q[9];
+    double Q[15];
     double df;
     double f_prev;
     caputo_init_scl();
@@ -35,7 +35,7 @@ class caputo_init_scl : public caputo_init {
 
 template <int dim> class caputo_init_vec : public caputo_init {
   public:
-    double Q[9 * dim];
+    double Q[15 * dim];
     double df[dim];
     double f_prev[dim];
 
@@ -57,8 +57,5 @@ double extrapolate1D_newton_linear(double p1, double p2, double t);
 double interpolate_caputo_parameter_arr(double alpha, const double arr[100]);
 double interpolate_caputo_parameter_beta(double alpha, const double arr[100]);
 double interpolate_caputo_parameter_taus(double alpha, const double arr[100]);
-
-extern const double betam[10][100];
-extern const double taum[9][100];
 
 } // namespace caputo
