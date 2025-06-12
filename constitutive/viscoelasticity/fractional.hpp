@@ -7,8 +7,8 @@
 namespace constitutive_models {
 template <int dim> class FractionalVE : public MatLawTime<dim> {
   private:
-    caputo::caputo_init_vec<dim> store;
-    caputo::caputo_init_scl store_p;
+    caputo::caputo_init_vec<dim, 9> store;
+    caputo::caputo_init_scl<9> store_p;
 
   public:
     MatLaw<dim> *m_law;
@@ -22,7 +22,7 @@ template <int dim> class FractionalVE : public MatLawTime<dim> {
 
 template <int dim> class FractionalVE3D {
   private:
-    caputo::caputo_init_vec<dim> store;
+    caputo::caputo_init_vec<dim, 9> store;
 
   public:
     MatLaw3D<dim> *m_law;

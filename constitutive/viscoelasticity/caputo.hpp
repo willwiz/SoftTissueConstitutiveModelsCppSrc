@@ -1,55 +1,57 @@
 #pragma once
 
 namespace caputo {
-class caputo_init {
+
+template <int n_prony> class caputo_init {
   protected:
-    double bek[15];
-    double e2[15];
+    double bek[n_prony];
+    double e2[n_prony];
     double dt, C0, K0, K1;
-    int N = 15;
 
   public:
     double alpha, Tf, delta;
-    double betas[15];
-    double taus[15];
+    double betas[n_prony];
+    double taus[n_prony];
     double beta0;
-    caputo_init();
+    caputo_init() : dt{}, betas{}, taus{} {};
     caputo_init(double alpha, double Tf, double delta);
-    ~caputo_init();
+    ~caputo_init() {};
     void set_pars(double alpha, double Tf, double delta);
     void update_dt(double dt);
     void update_dt_lin(double dt);
 };
 
-class caputo_init_scl : public caputo_init {
+template <int n_prony> class caputo_init_scl : public caputo_init<n_prony> {
   public:
-    double Q[15];
+    double Q[n_prony];
     double df;
     double f_prev;
-    caputo_init_scl();
-    caputo_init_scl(double alpha, double Tf, double delta);
-    ~caputo_init_scl();
+    caputo_init_scl() : caputo_init<n_prony>(), Q{}, f_prev{} {};
+    caputo_init_scl(double alpha, double Tf, double delta)
+        : caputo_init<n_prony>(alpha, Tf, delta), Q{}, f_prev() {};
+    ~caputo_init_scl() {};
     double caputo_iter(double fn, double dt);
     double diffeq_iter(double fn, double dt);
 };
 
-template <int dim> class caputo_init_vec : public caputo_init {
+template <int dim, int n_prony> class caputo_init_vec : public caputo_init<n_prony> {
   public:
-    double Q[15 * dim];
+    double Q[n_prony * dim];
     double df[dim];
     double f_prev[dim];
 
-    caputo_init_vec();
+    caputo_init_vec() : caputo_init<n_prony>(), Q{}, f_prev{} {};
 
-    caputo_init_vec(double alpha, double Tf, double delta);
+    caputo_init_vec(double alpha, double Tf, double delta)
+        : caputo_init<n_prony>(alpha, Tf, delta), Q{}, f_prev{} {};
 
-    ~caputo_init_vec();
+    ~caputo_init_vec() {};
 
     void caputo_iter(const double fn[], const double dt, double v[]);
     void diffeq_iter(const double fn[], const double dt, double v[]);
 };
 
-typedef caputo_init_vec<4> caputo_init_4;
+typedef caputo_init_vec<4, 9> caputo_init_4;
 
 double interpolate1D_newton_linear(double p1, double p2, double t);
 double extrapolate1D_newton_linear(double p1, double p2, double t);

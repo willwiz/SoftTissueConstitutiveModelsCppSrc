@@ -7,8 +7,8 @@
 namespace constitutive_models {
 template <int dim> class FractionalDiffeq {
   private:
-    caputo::caputo_init_vec<dim> store;
-    caputo::caputo_init_scl store_p;
+    caputo::caputo_init_vec<dim, 9> store;
+    caputo::caputo_init_scl<9> store_p;
 
   public:
     MatLawTime<dim> *m_law;

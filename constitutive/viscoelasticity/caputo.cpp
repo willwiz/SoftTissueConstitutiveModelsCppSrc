@@ -22,15 +22,12 @@ namespace caputo {
 /*----------------------------------------------------------------------
  |  Caputo Derivative Base Class
  -----------------------------------------------------------------------*/
-caputo_init::caputo_init() : dt{}, betas{}, taus{} {};
-
-caputo_init::~caputo_init() {};
-
-caputo_init::caputo_init(double alpha, double Tf, double delta) : dt{} {
+template <int n_prony>
+caputo_init<n_prony>::caputo_init(double alpha, double Tf, double delta) : dt{} {
     set_pars(alpha, Tf, delta);
 }
 
-void caputo_init::set_pars(double alpha, double Tf, double delta) {
+template <int n_prony> void caputo_init<n_prony>::set_pars(double alpha, double Tf, double delta) {
     double freq;
     double val;
 
@@ -40,25 +37,27 @@ void caputo_init::set_pars(double alpha, double Tf, double delta) {
     this->Tf = Tf;
     this->delta = delta;
 
-    val = interpolate_caputo_parameter_beta(alpha, betam15[15]);
+    val = interpolate_caputo_parameter_beta(alpha, caputo_pars[n_prony].betam[n_prony]);
 
     this->beta0 = val * pow(freq, alpha - 1.0);
 
-    for (int i = 0; i < this->N; i++) {
-        this->betas[i] = interpolate_caputo_parameter_beta(alpha, betam15[i]) * pow(freq, alpha);
-        this->taus[i] = interpolate_caputo_parameter_taus(alpha, taum15[i]) / freq;
+    for (int i = 0; i < n_prony; i++) {
+        this->betas[i] = interpolate_caputo_parameter_beta(alpha, caputo_pars[n_prony].betam[i]) *
+                         pow(freq, alpha);
+        this->taus[i] =
+            interpolate_caputo_parameter_taus(alpha, caputo_pars[n_prony].taum[i]) / freq;
     }
 }
 // Set parameters for dt, if dt is the same then there is no need to change
-void caputo_init::update_dt(double dt) {
+template <int n_prony> void caputo_init<n_prony>::update_dt(double dt) {
     if (this->dt == dt) return;
-    if (dt < 1e-16) return;
+    if (dt < 2.0e-16) return;
 
     double ek;
     this->dt = dt;
     // C0 = beta0 / dt;
     C0 = 0.0;
-    for (int k = 0; k < this->N; k++) {
+    for (int k = 0; k < n_prony; k++) {
         ek = exp(-0.5 * dt / taus[k]);
         e2[k] = ek * ek;
         bek[k] = betas[k] * ek;
@@ -66,57 +65,49 @@ void caputo_init::update_dt(double dt) {
 
     if (delta == 0.0) return;
     K0 = C0;
-    for (int k = 0; k < this->N; k++) {
+    for (int k = 0; k < n_prony; k++) {
         K0 = K0 + bek[k];
     }
     K0 = delta * K0;
     K1 = K0 + 1;
 }
 
-void caputo_init::update_dt_lin(double dt) {
+template <int n_prony> void caputo_init<n_prony>::update_dt_lin(double dt) {
     if (this->dt == dt) return;
-    if (dt < 2e-16) return;
+    if (dt < 2.0e-16) return;
 
     this->dt = dt;
     // C0 = beta0 / dt;
     C0 = 0.0;
-    for (int k = 0; k < this->N; k++) {
+    for (int k = 0; k < n_prony; k++) {
         e2[k] = taus[k] / (taus[k] + dt);
         bek[k] = betas[k] * e2[k];
     }
 
     if (delta == 0.0) return;
     K0 = C0;
-    for (int k = 0; k < this->N; k++) {
+    for (int k = 0; k < n_prony; k++) {
         K0 = K0 + bek[k];
     }
     K0 = delta * K0;
-    K1 = K0 + 1;
+    K1 = K0 + 1.0;
 }
 
 /*----------------------------------------------------------------------
  |  Implementation for the derivatives for scalar valued functions
  -----------------------------------------------------------------------*/
-caputo_init_scl::caputo_init_scl() : caputo_init(), Q{}, f_prev{} {
-}
-caputo_init_scl::~caputo_init_scl() {
-}
-
-caputo_init_scl::caputo_init_scl(double alpha, double Tf, double delta)
-    : caputo_init(alpha, Tf, delta), Q{}, f_prev() {};
-
 // The caputo derivative
-double caputo_init_scl::caputo_iter(double fn, double dt) {
+template <int n_prony> double caputo_init_scl<n_prony>::caputo_iter(double fn, double dt) {
 
-    update_dt_lin(dt);
+    this->caputo_init<n_prony>::update_dt_lin(dt);
 
     df = fn - f_prev;
 
     // double v = C0 * df;
     double v = 0.0;
 
-    for (int k = 0; k < this->N; k++) {
-        Q[k] = e2[k] * Q[k] + bek[k] * df;
+    for (int k = 0; k < n_prony; k++) {
+        Q[k] = this->e2[k] * Q[k] + this->bek[k] * df;
         v = v + Q[k];
     }
 
@@ -126,22 +117,22 @@ double caputo_init_scl::caputo_iter(double fn, double dt) {
 }
 
 // The solution to the fractional differential equation
-double caputo_init_scl::diffeq_iter(double fn, double dt) {
+template <int n_prony> double caputo_init_scl<n_prony>::diffeq_iter(double fn, double dt) {
 
-    update_dt_lin(dt);
+    this->caputo_init<n_prony>::update_dt_lin(dt);
     // Stress calculations
-    double v = fn + K0 * f_prev;
+    double v = fn + this->K0 * f_prev;
 
-    for (int k = 0; k < this->N; k++) {
-        v = v - delta * e2[k] * Q[k];
+    for (int k = 0; k < n_prony; k++) {
+        v = v - this->delta * this->e2[k] * Q[k];
     }
-    v = v / K1;
+    v = v / this->K1;
 
     // Updates
     df = v - f_prev;
     f_prev = v;
-    for (int k = 0; k < this->N; k++) {
-        Q[k] = e2[k] * Q[k] + bek[k] * df;
+    for (int k = 0; k < n_prony; k++) {
+        Q[k] = this->e2[k] * Q[k] + this->bek[k] * df;
     }
 
     return v;
@@ -153,20 +144,13 @@ double caputo_init_scl::diffeq_iter(double fn, double dt) {
  -----------------------------------------------------------------------*/
 
 // Fractional Derivative
-template <int dim> caputo_init_vec<dim>::caputo_init_vec() : caputo_init(), Q{}, f_prev{} {};
 
-template <int dim> caputo_init_vec<dim>::~caputo_init_vec(){};
-
-template <int dim>
-caputo_init_vec<dim>::caputo_init_vec(double alpha, double Tf, double delta)
-    : caputo_init(alpha, Tf, delta), Q{}, f_prev{} {};
-
-template <int dim>
-void caputo_init_vec<dim>::caputo_iter(const double fn[], const double dt, double v[]) {
+template <int dim, int n_prony>
+void caputo_init_vec<dim, n_prony>::caputo_iter(const double fn[], const double dt, double v[]) {
 
     int krow;
 
-    update_dt_lin(dt);
+    this->caputo_init<n_prony>::update_dt_lin(dt);
 
     for (int i = 0; i < dim; i++) {
         df[i] = fn[i] - f_prev[i];
@@ -176,9 +160,9 @@ void caputo_init_vec<dim>::caputo_iter(const double fn[], const double dt, doubl
     }
 
     krow = 0;
-    for (int k = 0; k < this->N; k++) {
+    for (int k = 0; k < n_prony; k++) {
         for (int i = 0; i < dim; i++) {
-            Q[krow + i] = e2[k] * Q[krow + i] + bek[k] * df[i];
+            Q[krow + i] = this->e2[k] * Q[krow + i] + this->bek[k] * df[i];
             v[i] = v[i] + Q[krow + i];
         }
         krow += dim;
@@ -186,28 +170,28 @@ void caputo_init_vec<dim>::caputo_iter(const double fn[], const double dt, doubl
 }
 
 // The fractional differential equation
-template <int dim>
-void caputo_init_vec<dim>::diffeq_iter(const double fn[], const double dt, double v[]) {
+template <int dim, int n_prony>
+void caputo_init_vec<dim, n_prony>::diffeq_iter(const double fn[], const double dt, double v[]) {
 
     int krow;
 
-    update_dt_lin(dt);
+    this->caputo_init<n_prony>::update_dt_lin(dt);
 
     // Stress calculations
     for (int i = 0; i < dim; i++) {
-        v[i] = fn[i] + K0 * f_prev[i];
+        v[i] = fn[i] + this->K0 * f_prev[i];
     }
 
     krow = 0;
-    for (int k = 0; k < this->N; k++) {
+    for (int k = 0; k < n_prony; k++) {
 
         for (int i = 0; i < dim; i++) {
-            v[i] = v[i] - delta * e2[k] * Q[krow + i];
+            v[i] = v[i] - this->delta * this->e2[k] * Q[krow + i];
         }
         krow += dim;
     }
     for (int i = 0; i < dim; i++) {
-        v[i] = v[i] / K1;
+        v[i] = v[i] / this->K1;
     }
 
     // Updates
@@ -217,10 +201,10 @@ void caputo_init_vec<dim>::diffeq_iter(const double fn[], const double dt, doubl
     }
 
     krow = 0;
-    for (int k = 0; k < this->N; k++) {
+    for (int k = 0; k < n_prony; k++) {
 
         for (int i = 0; i < dim; i++) {
-            Q[krow + i] = e2[k] * Q[krow + i] + bek[k] * df[i];
+            Q[krow + i] = this->e2[k] * Q[krow + i] + this->bek[k] * df[i];
         }
         krow += dim;
     }
@@ -301,18 +285,6 @@ double interpolate_caputo_parameter_taus(double alpha, const double arr[100]) {
 /*----------------------------------------------------------------------
  |  The precomputed beta and tau values are given here.
  -----------------------------------------------------------------------*/
-
-struct PrecompCaputo {
-    const double *betam;
-    const double *taum;
-};
-
-const PrecompCaputo caputo_pars[] = {
-    {betam9[0], taum9[0]}, {betam9[0], taum9[0]}, {betam9[0], taum9[0]},   {betam9[0], taum9[0]},
-    {betam9[0], taum9[0]}, {betam9[0], taum9[0]}, {betam9[0], taum9[0]},   {betam9[0], taum9[0]},
-    {betam9[0], taum9[0]}, {betam9[0], taum9[0]}, {betam9[0], taum9[0]},   {betam9[0], taum9[0]},
-    {betam9[0], taum9[0]}, {betam9[0], taum9[0]}, {betam15[0], taum15[0]},
-};
 
 } // namespace caputo
 

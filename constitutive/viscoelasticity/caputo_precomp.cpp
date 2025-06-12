@@ -5,7 +5,7 @@ namespace caputo {
 /***********************************************************************
  * AUTHOR COMMENTS:
  *
- * For now, only N_p = 9 Prony terms are included (for 500 Fourier series
+ * For now, only N_p = 9,15 Prony terms are included (for 500 Fourier series
  *    approximations)
  * More should be imported from the matlab data files at a later time
  ************************************************************************/
@@ -1283,6 +1283,18 @@ const double taum15[15][100] = {
      39055.237638047969085164, 39055.237638047969085164, 39055.237638047969085164,
      39055.237638047969085164, 39055.237638047969085164, 39055.237638047969085164,
      39055.237638047969085164}
+};
+
+struct PrecompCaputo {
+    const double (*betam)[100];
+    const double (*taum)[100];
+};
+
+constexpr PrecompCaputo caputo_pars[16] = {
+    {betam9, taum9}, {betam9, taum9}, {betam9, taum9},   {betam9, taum9},
+    {betam9, taum9}, {betam9, taum9}, {betam9, taum9},   {betam9, taum9},
+    {betam9, taum9}, {betam9, taum9}, {betam9, taum9},   {betam9, taum9},
+    {betam9, taum9}, {betam9, taum9}, {betam15, taum15}, {betam15, taum15},
 };
 
 } // namespace caputo
