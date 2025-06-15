@@ -21,12 +21,12 @@ class TrabeculaeCalciumOnly : public constitutive_models::MatLawTime3D<1> {
   public:
     TrabeculaeCalciumOnly(double pars[7], double fiber[], double visco[], double Tf)
         : matrix(pars[0]), m_muscle(pars[1], pars[4], fiber[0]), muscle(m_muscle, visco[0], Tf),
-          m_titin(pars[2], pars[5], fiber[0]), titin(m_titin, visco[1], 1.0),
+          m_titin(pars[2], pars[5], fiber[0]), titin(m_titin, visco[1], 0.1 * Tf),
           m_calcium(pars[3], pars[6], fiber[0]), calcium(m_calcium, 1.0, visco[2]) {};
     TrabeculaeCalciumOnly(double pars[7], double fiber[], double visco[], double Tf, double Cmax[])
         : matrix(pars[0]), m_muscle(pars[1], pars[4], fiber[0], Cmax[0]),
           muscle(m_muscle, visco[0], Tf), m_titin(pars[2], pars[5], fiber[0], Cmax[0]),
-          titin(m_titin, visco[1], 1.0), m_calcium(pars[3], pars[6], fiber[0], Cmax[0]),
+          titin(m_titin, visco[1], 0.1 * Tf), m_calcium(pars[3], pars[6], fiber[0], Cmax[0]),
           calcium(m_calcium, 1.0, visco[2]) {};
     ~TrabeculaeCalciumOnly() {};
 

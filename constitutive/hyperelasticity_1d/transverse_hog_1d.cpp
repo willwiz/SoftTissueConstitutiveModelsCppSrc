@@ -44,15 +44,16 @@ void TransverseHog1D::set_pars(double kappa) {
 void TransverseHog1D::set_pars(double kappa, double Cmax) {
     this->set_pars(kappa);
     E1 = calc_I4(Cmax, iso, fiber);
-    k1 = k1 / E1;
+    // k1 = k1;
     E2 = E1 * E1;
 }
 
 // Stress functions
 double TransverseHog1D::stress(const kinematics::kinematics<1> &kin, double stress[]) {
 
-    double I_4 = kin.C[0] * fiber + 2 * iso * kin.I_n - 1.0;
-    double dWd4 = k1 * I_4 * exp(k2 * (I_4 * I_4 - E2));
+    double I_4 = (kin.C[0] * fiber + 2.0 * iso * kin.I_n - 1.0) / E1;
+    ;
+    double dWd4 = k1 * I_4 * exp(k2 * (I_4 * I_4 - 1.0));
 
     stress[0] = dWd4 * fiber;
     // std::cout << kin.C[0] << " " << kin.I_n << "\n";

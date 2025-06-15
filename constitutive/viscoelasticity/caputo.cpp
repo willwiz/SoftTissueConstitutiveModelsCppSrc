@@ -25,6 +25,7 @@ namespace caputo {
 template <int n_prony>
 caputo_init<n_prony>::caputo_init(double alpha, double Tf, double delta) : dt{} {
     set_pars(alpha, Tf, delta);
+    update_dt_lin(0.01);
 }
 
 template <int n_prony> void caputo_init<n_prony>::set_pars(double alpha, double Tf, double delta) {
@@ -50,8 +51,8 @@ template <int n_prony> void caputo_init<n_prony>::set_pars(double alpha, double 
 }
 // Set parameters for dt, if dt is the same then there is no need to change
 template <int n_prony> void caputo_init<n_prony>::update_dt(double dt) {
-    if (this->dt == dt) return;
-    if (dt < 2.0e-16) return;
+    if (std::abs(this->dt - dt) < 1e-10) return;
+    if (dt < 1e-10) dt = 1e-10;
 
     double ek;
     this->dt = dt;
@@ -73,12 +74,12 @@ template <int n_prony> void caputo_init<n_prony>::update_dt(double dt) {
 }
 
 template <int n_prony> void caputo_init<n_prony>::update_dt_lin(double dt) {
-    if (this->dt == dt) return;
-    if (dt < 2.0e-16) return;
+    if (std::abs(this->dt - dt) < 1e-10) return;
+    if (dt < 1e-10) dt = 1e-10;
 
     this->dt = dt;
-    // C0 = beta0 / dt;
-    C0 = 0.0;
+    C0 = beta0 / dt;
+    // C0 = 0.0;
     for (int k = 0; k < n_prony; k++) {
         e2[k] = taus[k] / (taus[k] + dt);
         bek[k] = betas[k] * e2[k];

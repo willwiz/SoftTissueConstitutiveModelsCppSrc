@@ -28,6 +28,10 @@ double penalty_function_null(double pars[], double fiber[], double visco[]) {
     return 1.0;
 };
 
+double penalty_function_13(double pars[], double fiber[], double visco[]) {
+    return 1.0 + (pars[12] - 0.2) * (pars[12] - 0.2);
+};
+
 template <class matlaw>
 void simulate_general(
     double pars[], double fiber[], double visco[], double Tf, double Cmax[], double strain[],
@@ -72,7 +76,7 @@ double residual_body_general(
     double res_protocol;
     for (int k = 0; k < nset; k++) {
         res_protocol = 0.0;
-        for (int i = index[select[k]]; i <= index[select[k] + 1]; i++) {
+        for (int i = index[select[k]]; i < index[select[k] + 1]; i++) {
             res_protocol = res_protocol + norm_func(sims[i], stress[i], strain[i]);
         }
         res = res + weight[k] * res_protocol;
@@ -91,7 +95,7 @@ double residual_body_zeroed(
     double zeroed_stress = stress[index[select[0]]];
     for (int k = 0; k < nset; k++) {
         res_protocol = 0.0;
-        for (int i = index[select[k]]; i <= index[select[k] + 1]; i++) {
+        for (int i = index[select[k]]; i < index[select[k] + 1]; i++) {
             eps = (sims[i] - stress[i] + zeroed_stress);
             linfnorm = std::max(linfnorm, std::abs(eps));
             res_protocol = res_protocol + eps * eps;
@@ -111,7 +115,7 @@ double residual_body_drift(
     double zeroed_stress = stress[index[select[0]]];
     double zeroed_sim = sims[index[select[0]]];
     for (int k = 0; k < nset; k++) {
-        for (int i = index[select[k]]; i <= index[select[k] + 1]; i++) {
+        for (int i = index[select[k]]; i < index[select[k] + 1]; i++) {
             // Compute the residual for sim data difference
             eps_ptr[i] = stress[i] - sims[i] - zeroed_stress + zeroed_sim;
         }
@@ -124,7 +128,7 @@ double residual_body_drift(
     // Compute the projection inner matrix
     double sum_t = 0.0, sum_t2 = 0.0, sum_ones = 0.0;
     for (int k = 0; k < nset; k++) {
-        for (int i = index[select[k]]; i <= index[select[k] + 1]; i++) {
+        for (int i = index[select[k]]; i < index[select[k] + 1]; i++) {
             // sum_ones = sum_ones + 1.0;
             // sum_t = sum_t + t_ptr[i + 1];
             sum_t2 = sum_t2 + t_ptr[i + 1] * t_ptr[i + 1];
@@ -139,7 +143,7 @@ double residual_body_drift(
     double sum_ty = 0.0;
     // double sum_y = 0.0;
     for (int k = 0; k < nset; k++) {
-        for (int i = index[select[k]]; i <= index[select[k] + 1]; i++) {
+        for (int i = index[select[k]]; i < index[select[k] + 1]; i++) {
             // sum_y = sum_y + eps_ptr[i];
             sum_ty = sum_ty + t_ptr[i] * eps_ptr[i];
         }
@@ -149,7 +153,7 @@ double residual_body_drift(
     double slope = sum_ty / sum_t2;
     double *fix_data = new double[n + 1]();
     for (int k = 0; k < nset; k++) {
-        for (int i = index[select[k]]; i <= index[select[k] + 1]; i++) {
+        for (int i = index[select[k]]; i < index[select[k] + 1]; i++) {
             // Subtract the linear regression from the residual
             fix_data[i] = stress[i] - (slope * t_ptr[i]) - zeroed_stress + zeroed_sim;
         }
@@ -169,7 +173,7 @@ double residual_body_drift(
         //     continue; // Skip even numbers
         // }
         L2_norm_p = 0.0;
-        for (int i = index[select[k]]; i <= index[select[k] + 1]; i++) {
+        for (int i = index[select[k]]; i < index[select[k] + 1]; i++) {
             Linf_norm = std::max(Linf_norm, std::abs(eps_ptr[i]));
             L2_norm_p += eps_ptr[i] * eps_ptr[i];
         }
@@ -201,7 +205,7 @@ double residual_body_window(
         //     continue; // Skip even numbers
         // }
         L2_norm_p = 0.0;
-        for (int i = index[select[k]]; i <= index[select[k] + 1]; i++) {
+        for (int i = index[select[k]]; i < index[select[k] + 1]; i++) {
             L2_norm_p += eps_ptr[i] * eps_ptr[i];
         }
         L2_norm += weight[k] * L2_norm_p;
@@ -216,7 +220,7 @@ double residual_protocol_l1(
 ) {
     // Compute norms
     double L1_norm = 0.0;
-    for (int i = start; i <= end; i++) {
+    for (int i = start; i < end; i++) {
         L1_norm += (stress[i] - sims[i + shift]) * (stress[i] - sims[i + shift]);
     }
     return L1_norm;
@@ -232,15 +236,18 @@ double residual_body_l2(
         // if (k % 2 == 0) {
         //     continue; // Skip even numbers
         // }
+        // L2_norm +=
+        //     weight[k] * std::min(
+        //                     residual_protocol_l1(
+        //                         &stress[0], &sims[0], index[select[k]], index[select[k] + 1], 0
+        //                     ),
+        //                     residual_protocol_l1(
+        //                         &stress[0], &sims[0], index[select[k]], index[select[k] + 1], 1
+        //                     )
+        //                 );
         L2_norm +=
-            weight[k] * std::min(
-                            residual_protocol_l1(
-                                &stress[0], &sims[0], index[select[k]], index[select[k] + 1], 0
-                            ),
-                            residual_protocol_l1(
-                                &stress[0], &sims[0], index[select[k]], index[select[k] + 1], 1
-                            )
-                        );
+            weight[k] *
+            residual_protocol_l1(&stress[0], &sims[0], index[select[k]], index[select[k] + 1], 0);
     }
     // Clean up
     return L2_norm;
@@ -251,10 +258,10 @@ double residual_body_neighbour(
     int nset, const int index[], const int select[], const double sims[]
 ) {
     double L2_norm[5] = {0.0};
-    for (int m = -2; m <= 2; m++) {
+    for (int m = -2; m < 3; m++) {
         double L2_norm_p;
         for (int k = 0; k < nset; k++) {
-            for (int i = index[select[k]]; i <= index[select[k] + 1]; i++) {
+            for (int i = index[select[k]]; i < index[select[k] + 1]; i++) {
                 // Compute the residual for sim data difference
                 L2_norm_p += (stress[i] - sims[i + m]) * (stress[i] - sims[i + m]);
             }
